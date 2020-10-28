@@ -1,0 +1,1 @@
+This application is an API that can be used for a KanBan/Scrum board UI.
