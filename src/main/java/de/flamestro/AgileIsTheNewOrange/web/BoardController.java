@@ -13,11 +13,13 @@ public class BoardController {
 
     @GetMapping("/board")
     public static ResponseEntity<Board> getBoard(){
-        return ResponseEntity.ok().build();
+        Board mockBoard = Board.builder().name("Mock Board").build();
+        return ResponseEntity.ok(mockBoard);
     }
 
     @PostMapping("/board")
     public static ResponseEntity<Board> addBoard(){
-        return ResponseEntity.ok().build();
+        Board mockBoard = Board.builder().name("Mock Board").build();
+        return ResponseEntity.ok(mockBoard);
     }
 }
