@@ -1,4 +1,5 @@
 package de.flamestro.AgileIsTheNewOrange.web;
 
-public class Status {
+public enum Status {
+    SUCCESS
 }
