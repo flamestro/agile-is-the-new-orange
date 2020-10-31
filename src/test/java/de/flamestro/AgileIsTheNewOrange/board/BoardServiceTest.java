@@ -19,6 +19,9 @@ class BoardServiceTest extends AbstractIntegrationTest {
 
         Board result = mongoTemplate.findById(board.getId(), Board.class);
 
+        assert board.getId() != null;
+        assert board.getLanes() != null;
+        assert !board.getName().isBlank();
         assertThat(board).usingRecursiveComparison().isEqualTo(result);
     }
 
