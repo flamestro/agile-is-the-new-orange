@@ -1,6 +1,6 @@
 package de.flamestro.AgileIsTheNewOrange.board;
 
-import de.flamestro.AgileIsTheNewOrange.board.repository.BoardRepository;
+import de.flamestro.AgileIsTheNewOrange.board.model.Board;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +19,7 @@ public class BoardService {
         return board;
     }
 
-    public List<Board> getBoardById(String name){
+    public List<Board> getBoard(String name){
         return boardRepository.findByName(name);
     }
 }

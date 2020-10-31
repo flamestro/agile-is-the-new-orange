@@ -1,9 +1,8 @@
 package de.flamestro.AgileIsTheNewOrange.web;
 
-import de.flamestro.AgileIsTheNewOrange.board.Board;
+import de.flamestro.AgileIsTheNewOrange.board.model.Board;
 import de.flamestro.AgileIsTheNewOrange.board.BoardService;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +19,7 @@ public class BoardController {
     // TODO: Think of a better mapping -> get by name might not be the best way for /board
     @GetMapping("/board")
     public ResponseEntity<List<Board>> getBoard(@Param("name") String name){
-        List<Board> board =  boardService.getBoardById(name);
+        List<Board> board =  boardService.getBoard(name);
         return ResponseEntity.ok(board);
     }
 
