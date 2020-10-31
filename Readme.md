@@ -8,5 +8,9 @@ Swagger is on: http://localhost:8080/swagger-ui.html
 
 
 Needs to be dockerized: 
+
 docker run -d -p 27017-27019:27017-27019 --name mongodb mongo:4.0.4
+
+In Mongo Compass:
+
 mongodb://localhost:27017
