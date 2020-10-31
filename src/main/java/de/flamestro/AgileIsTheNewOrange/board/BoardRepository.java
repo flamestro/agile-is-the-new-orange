@@ -1,6 +1,6 @@
-package de.flamestro.AgileIsTheNewOrange.board.repository;
+package de.flamestro.AgileIsTheNewOrange.board;
 
-import de.flamestro.AgileIsTheNewOrange.board.Board;
+import de.flamestro.AgileIsTheNewOrange.board.model.Board;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;
