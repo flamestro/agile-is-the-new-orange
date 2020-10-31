@@ -6,7 +6,6 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-// https://www.patrick-gotthard.de/integrationstests-mit-spring-data-mongodb-und-testcontainers
 @SpringBootTest
 @Testcontainers
 public class AbstractIntegrationTest {

@@ -1,7 +1,7 @@
 spring:
   data:
     mongodb:
-      uri: mongodb://localhost:27017/agile_is_the_new_orage
+      uri: mongodb://localhost:27017/agile_is_the_new_orange
 
 management:
   server:
