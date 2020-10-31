@@ -1,4 +1,4 @@
-package de.flamestro.AgileIsTheNewOrange.board;
+package de.flamestro.AgileIsTheNewOrange.board.model;
 
 import lombok.Builder;
 import lombok.Getter;
