@@ -1,9 +1,7 @@
 spring:
   data:
     mongodb:
-      database: agile_is_the_new_orage
-      port: 27017
-      host: localhost
+      uri: mongodb://localhost:27017/agile_is_the_new_orage
 
 management:
   server:
