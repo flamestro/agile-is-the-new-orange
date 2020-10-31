@@ -1,3 +1,10 @@
+spring:
+  data:
+    mongodb:
+      database: agile_is_the_new_orage
+      port: 27017
+      host: localhost
+
 management:
   server:
     port: 8081
