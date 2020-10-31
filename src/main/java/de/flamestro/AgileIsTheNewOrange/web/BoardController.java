@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class BoardController {
 
     @GetMapping("/board")
-    public static ResponseEntity<Board> getBoard(){
+    public static ResponseEntity<Board> createBoard(){
         Board mockBoard = Board.builder().name("Mock Board").build();
         return ResponseEntity.ok(mockBoard);
     }

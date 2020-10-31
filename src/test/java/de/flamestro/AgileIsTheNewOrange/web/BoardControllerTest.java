@@ -12,7 +12,7 @@ class BoardControllerTest {
     void whenGetBoardIsCalled_thenReturnValidResponse() {
         Board expectedBoard = Board.builder().name("Mock Board").build();
 
-        ResponseEntity<Board> responseEntity = BoardController.getBoard();
+        ResponseEntity<Board> responseEntity = BoardController.createBoard();
 
         assertThat(responseEntity.getBody()).usingRecursiveComparison().isEqualTo(expectedBoard);
     }
