@@ -4,4 +4,4 @@ Application runs on: http://localhost:8080
 
 Metrics are on: http://localhost:8081/actuator/prometheus
 
-Swagger is on: http://localhost:8080/swagger-ui/
+Swagger is on: http://localhost:8080/swagger-ui.html
