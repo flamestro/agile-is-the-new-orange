@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -37,10 +36,6 @@ public class BoardService {
     public void addLane(Board board, Lane lane){
         board.getLanes().add(lane);
         boardRepository.save(board);
-    }
-
-    public List<Board> getBoardByName(String name){
-        return boardRepository.findByName(name);
     }
 
     public Board getBoardById(String id){
