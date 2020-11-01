@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -17,7 +17,7 @@ public class BoardService {
     private final BoardRepository boardRepository;
 
     public Board createBoard(String name){
-        Board board = Board.builder().name(name).lanes(new HashMap<>()).build();
+        Board board = Board.builder().name(name).lanes(Collections.emptyList()).build();
         boardRepository.save(board);
         log.info("created board with id: {}", board.getId());
         return board;

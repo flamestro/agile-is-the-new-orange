@@ -1,13 +1,13 @@
 package de.flamestro.AgileIsTheNewOrange.web;
 
-import de.flamestro.AgileIsTheNewOrange.util.AbstractIntegrationTest;
 import de.flamestro.AgileIsTheNewOrange.board.model.Board;
+import de.flamestro.AgileIsTheNewOrange.util.AbstractIntegrationTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -42,7 +42,7 @@ class BoardControllerTest extends AbstractIntegrationTest {
 
         // then
         assertThat(Objects.requireNonNull(responseEntity.getBody()).getName()).isEqualTo("Mock");
-        assertThat(Objects.requireNonNull(responseEntity.getBody()).getLanes()).isEqualTo(new HashMap<>());
+        assertThat(Objects.requireNonNull(responseEntity.getBody()).getLanes()).isEqualTo(Collections.emptyList());
         assertThat(Objects.requireNonNull(responseEntity.getBody()).getId()).isNotBlank();
     }
 }

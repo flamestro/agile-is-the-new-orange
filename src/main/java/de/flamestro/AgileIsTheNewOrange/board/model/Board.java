@@ -7,7 +7,7 @@ import org.springframework.data.annotation.Id;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.util.HashMap;
+import java.util.List;
 
 @Getter
 @Builder
@@ -19,5 +19,5 @@ public class Board {
     @NotBlank
     private final String name;
     @NotNull
-    private final HashMap<Integer, Lane> lanes;
+    private final List<Lane> lanes;
 }
