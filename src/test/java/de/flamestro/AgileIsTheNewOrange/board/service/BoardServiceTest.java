@@ -1,7 +1,6 @@
-package de.flamestro.AgileIsTheNewOrange.board;
+package de.flamestro.AgileIsTheNewOrange.board.service;
 
 import de.flamestro.AgileIsTheNewOrange.board.model.Board;
-import de.flamestro.AgileIsTheNewOrange.board.service.BoardService;
 import de.flamestro.AgileIsTheNewOrange.util.AbstractIntegrationTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
