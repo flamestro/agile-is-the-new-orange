@@ -1,3 +1,5 @@
+![Java CI with Maven](https://github.com/flamestro/AgileIsTheNewOrange/workflows/Java%20CI%20with%20Maven/badge.svg)
+
 This application is an API that can be used for a KanBan/Scrum board UI.
 
 Application runs on: `http://localhost:8080`
