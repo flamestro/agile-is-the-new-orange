@@ -1,6 +1,7 @@
 package de.flamestro.AgileIsTheNewOrange.board.service;
 
 import de.flamestro.AgileIsTheNewOrange.board.model.Board;
+import de.flamestro.AgileIsTheNewOrange.board.model.Card;
 import de.flamestro.AgileIsTheNewOrange.board.model.Lane;
 import de.flamestro.AgileIsTheNewOrange.board.repository.BoardRepository;
 import de.flamestro.AgileIsTheNewOrange.board.repository.LaneRepository;
@@ -36,6 +37,12 @@ public class LaneService {
         boardRepository.save(board);
         log.info("removed lane(id={}) from board(id={})", lane.getId(), board.getId());
         return lane;
+    }
+
+    @Transactional
+    public void addCard(Lane lane, Card card){
+        lane.getCardList().add(card);
+        laneRepository.save(lane);
     }
 
     public Lane getLaneById(String id){
