@@ -3,9 +3,11 @@ package de.flamestro.AgileIsTheNewOrange.web;
 import de.flamestro.AgileIsTheNewOrange.board.model.Board;
 import de.flamestro.AgileIsTheNewOrange.util.AbstractIntegrationTest;
 import de.flamestro.AgileIsTheNewOrange.web.model.BoardResponse;
+import de.flamestro.AgileIsTheNewOrange.web.model.LaneResponse;
 import de.flamestro.AgileIsTheNewOrange.web.model.Status;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 
@@ -52,13 +54,7 @@ class BoardControllerTest extends AbstractIntegrationTest {
     @Test
     void whenRemoveBoardById_thenResponseIsTheSameBoard() {
         // when
-        ResponseEntity<BoardResponse> responseEntity = boardController.createBoard("Mock");
-        BoardResponse response = responseEntity.getBody();
-        assert response != null;
-        Board board = response.getBoard();
-        assert board != null;
-        assert board.getLanes() != null;
-        assert !board.getName().isBlank();
+        Board board = createBoard();
 
         // do
         ResponseEntity<BoardResponse> removeResponseEntity = boardController.removeBoardById(board.getId());
@@ -71,5 +67,65 @@ class BoardControllerTest extends AbstractIntegrationTest {
         assertThat(result.getBoard().getId()).isNotBlank();
         assertThat(result.getStatus()).isEqualTo(Status.SUCCESS);
         assertThat(result.getBoard()).usingRecursiveComparison().isEqualTo(board);
+    }
+
+    @Test
+    void whenLaneIsAddedToBoard_thenBoardContainsLane(@Autowired MongoTemplate mongoTemplate) {
+        // when
+        Board board = createBoard();
+
+        // do
+        ResponseEntity<LaneResponse> laneResponseResponseEntity = boardController.addLaneToBoard(board.getId(), "TestLane");
+
+        // then
+        Board resultBoard = mongoTemplate.findById(board.getId(), Board.class);
+        assert resultBoard != null;
+        LaneResponse resultLaneResponse = laneResponseResponseEntity.getBody();
+        assert resultLaneResponse != null;
+
+        assertThat(resultBoard.getName()).isEqualTo("Mock");
+        assertThat(resultBoard.getLanes().size()).isEqualTo(1);
+        assertThat(resultBoard.getLanes().get(0)).usingRecursiveComparison().isEqualTo(resultLaneResponse.getLane());
+        assertThat(resultBoard.getId()).isEqualTo(board.getId());
+        assertThat(resultLaneResponse.getStatus()).isEqualTo(Status.SUCCESS);
+    }
+
+    @Test
+    void whenLaneIsRemovedFromBoard_thenBoardLanesEmpty(@Autowired MongoTemplate mongoTemplate) {
+        // when
+        Board board = createBoard();
+
+        // do
+        ResponseEntity<LaneResponse> laneResponseResponseEntity = boardController.addLaneToBoard(board.getId(), "TestLane");
+
+        // then
+        Board resultBoard = mongoTemplate.findById(board.getId(), Board.class);
+        assert resultBoard != null;
+        LaneResponse resultLaneResponse = laneResponseResponseEntity.getBody();
+        assert resultLaneResponse != null;
+
+        assertThat(resultBoard.getLanes().size()).isEqualTo(1);
+        assertThat(resultBoard.getLanes().get(0)).usingRecursiveComparison().isEqualTo(resultLaneResponse.getLane());
+
+        // do
+        boardController.removeLaneFromBoard(board.getId(), resultLaneResponse.getLane().getId());
+
+        // then
+        assertThat(board.getLanes()).isEmpty();
+    }
+
+    private Board createBoard(){
+        // when
+        ResponseEntity<BoardResponse> responseEntity = boardController.createBoard("Mock");
+        BoardResponse createResponse = responseEntity.getBody();
+        assert createResponse != null;
+
+        Board board = createResponse.getBoard();
+        assert board != null;
+        assert board.getLanes() != null;
+        assert board.getLanes().size() == 0;
+        assert !board.getName().isBlank();
+
+        return board;
     }
 }
