@@ -1,6 +1,7 @@
-package de.flamestro.AgileIsTheNewOrange.board;
+package de.flamestro.AgileIsTheNewOrange.board.service;
 
 import de.flamestro.AgileIsTheNewOrange.board.model.Board;
+import de.flamestro.AgileIsTheNewOrange.board.repository.BoardRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

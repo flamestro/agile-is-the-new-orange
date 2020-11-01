@@ -1,7 +1,7 @@
 package de.flamestro.AgileIsTheNewOrange.web;
 
 import de.flamestro.AgileIsTheNewOrange.board.model.Board;
-import de.flamestro.AgileIsTheNewOrange.board.BoardService;
+import de.flamestro.AgileIsTheNewOrange.board.service.BoardService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
