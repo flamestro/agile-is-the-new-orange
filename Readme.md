@@ -1,4 +1,4 @@
-![Java CI with Maven](https://github.com/flamestro/AgileIsTheNewOrange/workflows/Java%20CI%20with%20Maven/badge.svg)
+![CI (Build and Test)](https://github.com/flamestro/AgileIsTheNewOrange/workflows/CI%20(Build%20and%20Test)/badge.svg)
 
 This application is an API that can be used for a KanBan/Scrum board UI.
 
