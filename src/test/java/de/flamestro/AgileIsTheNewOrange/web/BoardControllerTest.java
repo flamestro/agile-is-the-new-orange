@@ -1,15 +1,14 @@
 package de.flamestro.AgileIsTheNewOrange.web;
 
-import de.flamestro.AgileIsTheNewOrange.board.model.Board;
 import de.flamestro.AgileIsTheNewOrange.util.AbstractIntegrationTest;
+import de.flamestro.AgileIsTheNewOrange.web.model.BoardResponse;
+import de.flamestro.AgileIsTheNewOrange.web.model.Status;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -22,27 +21,30 @@ class BoardControllerTest extends AbstractIntegrationTest {
     @Test
     void whenGetBoardIsCalled_thenReturnValidResponse() {
         // when
-        var expectedBoard = boardController.createBoard("Mock").getBody();
+        BoardResponse expectedBoard = boardController.createBoard("Mock").getBody();
         assert expectedBoard != null;
-        var expectedBoardList = List.of(expectedBoard);
 
         // do
-        ResponseEntity<List<Board>> result = boardController.getBoardByName("Mock");
-        var resultBoardList = result.getBody();
+        ResponseEntity<BoardResponse> result = boardController.getBoardById(expectedBoard.getBoard().getId());
 
         // then
-        assert resultBoardList != null;
-        assertThat(resultBoardList.get(0)).usingRecursiveComparison().isEqualTo(expectedBoardList.get(0));
+        BoardResponse responseBody = result.getBody();
+        assert responseBody != null;
+        assertThat(responseBody.getBoard()).usingRecursiveComparison().isEqualTo(expectedBoard.getBoard());
+        assertThat(responseBody.getStatus()).isEqualTo(Status.SUCCESS);
     }
 
     @Test
     void whenAddBoardIsCalled_thenReturnValidResponse() {
         // do
-        ResponseEntity<Board> responseEntity = boardController.createBoard("Mock");
+        ResponseEntity<BoardResponse> responseEntity = boardController.createBoard("Mock");
 
         // then
-        assertThat(Objects.requireNonNull(responseEntity.getBody()).getName()).isEqualTo("Mock");
-        assertThat(Objects.requireNonNull(responseEntity.getBody()).getLanes()).isEqualTo(Collections.emptyList());
-        assertThat(Objects.requireNonNull(responseEntity.getBody()).getId()).isNotBlank();
+        BoardResponse result = responseEntity.getBody();
+        assert result != null;
+        assertThat(result.getBoard().getName()).isEqualTo("Mock");
+        assertThat(result.getBoard().getLanes()).isEqualTo(Collections.emptyList());
+        assertThat(result.getBoard().getId()).isNotBlank();
+        assertThat(result.getStatus()).isEqualTo(Status.SUCCESS);
     }
 }

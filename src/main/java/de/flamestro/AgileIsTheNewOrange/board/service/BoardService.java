@@ -27,20 +27,15 @@ public class BoardService {
     }
 
     @Transactional
-    public void removeBoard(String id){
+    public Board removeBoard(String id){
         Board board = boardRepository.findBoardById(id);
         boardRepository.delete(board);
+        return board;
     }
 
     @Transactional
     public void addLane(Board board, Lane lane){
         board.getLanes().add(lane);
-        boardRepository.save(board);
-    }
-
-    @Transactional
-    public void removeLane(Board board, Lane lane){
-        board.getLanes().remove(lane);
         boardRepository.save(board);
     }
 

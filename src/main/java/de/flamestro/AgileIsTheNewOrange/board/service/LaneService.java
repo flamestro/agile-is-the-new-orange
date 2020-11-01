@@ -2,6 +2,7 @@ package de.flamestro.AgileIsTheNewOrange.board.service;
 
 import de.flamestro.AgileIsTheNewOrange.board.model.Board;
 import de.flamestro.AgileIsTheNewOrange.board.model.Lane;
+import de.flamestro.AgileIsTheNewOrange.board.repository.BoardRepository;
 import de.flamestro.AgileIsTheNewOrange.board.repository.LaneRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 public class LaneService {
 
     private final LaneRepository laneRepository;
+    private final BoardRepository boardRepository;
     private final BoardService boardService;
 
     @Transactional
@@ -28,12 +30,15 @@ public class LaneService {
     }
 
     @Transactional
-    public void removeLane(String laneId, Board board){
-        Lane lane = laneRepository.findLaneById(laneId);
+    public Lane removeLane(Lane lane, Board board){
         laneRepository.delete(lane);
+        board.getLanes().removeIf(laneInBoard -> laneInBoard.getId().equals(lane.getId()));
+        boardRepository.save(board);
+        log.info("removed lane(id={}) from board(id={})", lane.getId(), board.getId());
+        return lane;
+    }
 
-        boardService.removeLane(board, lane);
-
-        log.info("removed lane(id={}) from board(id={})", laneId, board.getId());
+    public Lane getLaneById(String id){
+        return laneRepository.findLaneById(id);
     }
 }
