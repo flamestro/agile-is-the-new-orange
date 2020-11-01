@@ -1,4 +1,6 @@
 spring:
+  application:
+    name: agile_is_the_new_orange
   data:
     mongodb:
       uri: mongodb://localhost:27017/agile_is_the_new_orange
