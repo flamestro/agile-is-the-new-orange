@@ -34,4 +34,10 @@ public class BoardController {
         Board board = boardService.createBoard(name);
         return ResponseEntity.ok(board);
     }
+
+    @DeleteMapping("/board/{id}")
+    public ResponseEntity<Board> removeBoardById(@PathVariable String id){
+        boardService.removeBoard(id);
+        return ResponseEntity.ok().build();
+    }
 }

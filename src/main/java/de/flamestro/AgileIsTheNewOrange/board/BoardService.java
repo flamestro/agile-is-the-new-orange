@@ -30,4 +30,9 @@ public class BoardService {
         return boardRepository.findBoardById(id);
     }
 
+    public void removeBoard(String id){
+        Board board = boardRepository.findBoardById(id);
+        boardRepository.delete(board);
+    }
+
 }
