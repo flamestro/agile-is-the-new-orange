@@ -2,6 +2,7 @@ package de.flamestro.AgileIsTheNewOrange.board.model;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 import org.springframework.data.annotation.Id;
 
@@ -10,6 +11,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Getter
+@Setter
 @Builder
 @ToString
 public class Lane {
@@ -17,8 +19,8 @@ public class Lane {
     public String id;
 
     @NotBlank
-    private final String name;
+    private String name;
 
     @NotNull
-    private final List<Card> cardList;
+    private List<Card> cardList;
 }

@@ -14,9 +14,10 @@ class BoardServiceTest extends AbstractIntegrationTest {
 
     @Test
     void whenCreateBoard_thenBoardIsInMongoDB(@Autowired MongoTemplate mongoTemplate) {
-        // when
+        // do
         Board board = boardService.createBoard("test_board");
 
+        // then
         Board result = mongoTemplate.findById(board.getId(), Board.class);
 
         assert board.getId() != null;
@@ -24,5 +25,4 @@ class BoardServiceTest extends AbstractIntegrationTest {
         assert !board.getName().isBlank();
         assertThat(board).usingRecursiveComparison().isEqualTo(result);
     }
-
 }

@@ -46,13 +46,13 @@ public class BoardController {
 
     @PostMapping("/{boardId}/lane")
     public ResponseEntity<Lane> addLaneToBoard(@PathVariable String boardId, @Param("name") String name){
-        Lane lane = laneService.createLane(name, boardId);
+        Lane lane = laneService.createLane(name, boardService.getBoardById(boardId));
         return ResponseEntity.ok(lane);
     }
 
     @DeleteMapping("/{boardId}/lane/{laneId}")
     public ResponseEntity<Lane> removeLaneFromBoard(@PathVariable String boardId, @PathVariable String laneId){
-        laneService.removeLane(laneId, boardId);
+        laneService.removeLane(laneId, boardService.getBoardById(boardId));
         return ResponseEntity.ok().build();
     }
 }

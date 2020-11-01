@@ -2,12 +2,14 @@ package de.flamestro.AgileIsTheNewOrange.board.model;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 import org.springframework.data.annotation.Id;
 
 import javax.validation.constraints.NotBlank;
 
 @Getter
+@Setter
 @Builder
 @ToString
 public class Card {
@@ -15,7 +17,7 @@ public class Card {
     public String id;
 
     @NotBlank
-    private final String name;
+    private String name;
 
-    private final String description;
+    private String description;
 }
