@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.Collections;
 import java.util.List;
 
@@ -16,11 +17,18 @@ public class BoardService {
 
     private final BoardRepository boardRepository;
 
+    @Transactional
     public Board createBoard(String name){
         Board board = Board.builder().name(name).lanes(Collections.emptyList()).build();
         boardRepository.save(board);
         log.info("created board with id: {}", board.getId());
         return board;
+    }
+
+    @Transactional
+    public void removeBoard(String id){
+        Board board = boardRepository.findBoardById(id);
+        boardRepository.delete(board);
     }
 
     public List<Board> getBoardByName(String name){
@@ -30,10 +38,4 @@ public class BoardService {
     public Board getBoardById(String id){
         return boardRepository.findBoardById(id);
     }
-
-    public void removeBoard(String id){
-        Board board = boardRepository.findBoardById(id);
-        boardRepository.delete(board);
-    }
-
 }
