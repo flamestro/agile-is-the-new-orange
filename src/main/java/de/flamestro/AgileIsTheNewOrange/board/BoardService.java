@@ -22,7 +22,12 @@ public class BoardService {
         return board;
     }
 
-    public List<Board> getBoard(String name){
+    public List<Board> getBoardByName(String name){
         return boardRepository.findByName(name);
     }
+
+    public Board getBoardById(String id){
+        return boardRepository.findBoardById(id);
+    }
+
 }

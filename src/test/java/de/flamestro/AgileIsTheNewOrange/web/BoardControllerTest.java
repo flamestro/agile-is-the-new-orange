@@ -27,7 +27,7 @@ class BoardControllerTest extends AbstractIntegrationTest {
         var expectedBoardList = List.of(expectedBoard);
 
         // do
-        ResponseEntity<List<Board>> result = boardController.getBoard("Mock");
+        ResponseEntity<List<Board>> result = boardController.getBoardByName("Mock");
         var resultBoardList = result.getBody();
 
         // then

@@ -18,8 +18,14 @@ public class BoardController {
 
     // TODO: Think of a better mapping -> get by name might not be the best way for /board
     @GetMapping("/board")
-    public ResponseEntity<List<Board>> getBoard(@Param("name") String name){
-        List<Board> board =  boardService.getBoard(name);
+    public ResponseEntity<List<Board>> getBoardByName(@Param("name") String name){
+        List<Board> board =  boardService.getBoardByName(name);
+        return ResponseEntity.ok(board);
+    }
+
+    @GetMapping("/board/{id}")
+    public ResponseEntity<Board> getBoardById(@PathVariable String id){
+        Board board = boardService.getBoardById(id);
         return ResponseEntity.ok(board);
     }
 
