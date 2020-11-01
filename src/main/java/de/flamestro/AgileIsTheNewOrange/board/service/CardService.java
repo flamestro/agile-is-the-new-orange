@@ -1,5 +1,6 @@
 package de.flamestro.AgileIsTheNewOrange.board.service;
 
+import de.flamestro.AgileIsTheNewOrange.board.model.Board;
 import de.flamestro.AgileIsTheNewOrange.board.model.Card;
 import de.flamestro.AgileIsTheNewOrange.board.model.Lane;
 import de.flamestro.AgileIsTheNewOrange.board.repository.CardRepository;
@@ -20,10 +21,10 @@ public class CardService {
     private final LaneService laneService;
 
     @Transactional
-    public Card createCard(String name, Lane lane){
+    public Card createCard(String name, Board board, Lane lane){
         Card card = Card.builder().name(name).build();
         cardRepository.save(card);
-        laneService.addCard(lane, card);
+        laneService.addCard(board, lane, card);
         log.info("added card(id={}) to lane(id={})", card.getId(), lane.getId());
         return card;
     }
@@ -31,7 +32,7 @@ public class CardService {
     @Transactional
     public Card removeCard(Lane lane, Card card){
         cardRepository.delete(card);
-        lane.getCardList().removeIf(cardInLane -> cardInLane.getId().equals(card.getId()));
+        lane.getCards().removeIf(cardInLane -> cardInLane.getId().equals(card.getId()));
         laneRepository.save(lane);
         log.info("removed card(id={}) from lane(id={})", card.getId(), lane.getId());
         return card;
