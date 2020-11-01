@@ -1,5 +1,6 @@
 package de.flamestro.AgileIsTheNewOrange.web;
 
+import de.flamestro.AgileIsTheNewOrange.board.model.Board;
 import de.flamestro.AgileIsTheNewOrange.util.AbstractIntegrationTest;
 import de.flamestro.AgileIsTheNewOrange.web.model.BoardResponse;
 import de.flamestro.AgileIsTheNewOrange.web.model.Status;
@@ -46,5 +47,29 @@ class BoardControllerTest extends AbstractIntegrationTest {
         assertThat(result.getBoard().getLanes()).isEqualTo(Collections.emptyList());
         assertThat(result.getBoard().getId()).isNotBlank();
         assertThat(result.getStatus()).isEqualTo(Status.SUCCESS);
+    }
+
+    @Test
+    void whenRemoveBoardById_thenResponseIsTheSameBoard() {
+        // when
+        ResponseEntity<BoardResponse> responseEntity = boardController.createBoard("Mock");
+        BoardResponse response = responseEntity.getBody();
+        assert response != null;
+        Board board = response.getBoard();
+        assert board != null;
+        assert board.getLanes() != null;
+        assert !board.getName().isBlank();
+
+        // do
+        ResponseEntity<BoardResponse> removeResponseEntity = boardController.removeBoardById(board.getId());
+
+        // then
+        BoardResponse result = removeResponseEntity.getBody();
+        assert result != null;
+        assertThat(result.getBoard().getName()).isEqualTo("Mock");
+        assertThat(result.getBoard().getLanes()).isEqualTo(Collections.emptyList());
+        assertThat(result.getBoard().getId()).isNotBlank();
+        assertThat(result.getStatus()).isEqualTo(Status.SUCCESS);
+        assertThat(result.getBoard()).usingRecursiveComparison().isEqualTo(board);
     }
 }
