@@ -18,7 +18,7 @@ public class BoardService {
     public Board createBoard(String name){
         Board board = Board.builder().name(name).lanes(new HashMap<>()).build();
         boardRepository.save(board);
-        log.info("saved board with id: {}", board.getId());
+        log.info("created board with id: {}", board.getId());
         return board;
     }
 
