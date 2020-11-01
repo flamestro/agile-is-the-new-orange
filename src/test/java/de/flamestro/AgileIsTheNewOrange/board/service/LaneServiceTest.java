@@ -26,7 +26,7 @@ class LaneServiceTest extends AbstractIntegrationTest {
 
         // then
         assert lane.getId() != null;
-        assert lane.getCardList() != null;
+        assert lane.getCards() != null;
         assert !lane.getName().isBlank();
         assertThat(board.getLanes().get(0)).usingRecursiveComparison().isEqualTo(lane);
     }
@@ -43,7 +43,7 @@ class LaneServiceTest extends AbstractIntegrationTest {
 
         // then
         assert lane.getId() != null;
-        assert lane.getCardList() != null;
+        assert lane.getCards() != null;
         assert !lane.getName().isBlank();
         assertThat(board.getLanes().size()).isEqualTo(0);
     }

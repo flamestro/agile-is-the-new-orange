@@ -18,5 +18,5 @@ public class Lane {
     private final String name;
 
     @NotNull
-    private final List<Card> cardList;
+    private final List<Card> cards;
 }
