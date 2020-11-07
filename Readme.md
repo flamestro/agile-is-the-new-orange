@@ -9,9 +9,10 @@ Metrics are on: `http://localhost:8081/actuator/prometheus`
 Swagger is on: `http://localhost:8080/swagger-ui.html`
 
 
-Needs to be dockerized: 
+Start mongoDB using:
 
-`docker run -d -p 27017-27019:27017-27019 --name mongodb mongo:4.0.4`
+`docker-compose -f docker-compose.yml up -d`
+
 
 In Mongo Compass:
 
