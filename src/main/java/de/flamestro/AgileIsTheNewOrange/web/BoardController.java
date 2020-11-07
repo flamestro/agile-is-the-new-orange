@@ -62,7 +62,7 @@ public class BoardController {
 
     @DeleteMapping("/{boardId}/lane/{laneId}/card/{cardId}")
     public ResponseEntity<CardResponse> removeCardFromLane(@PathVariable String boardId, @PathVariable String laneId, @PathVariable String cardId){
-        Card card = cardService.removeCard(laneService.getLaneById(laneId), cardService.getCardById(cardId));
+        Card card = cardService.removeCard(boardService.getBoardById(boardId), laneService.getLaneById(laneId), cardService.getCardById(cardId));
         return ResponseEntity.ok(CardResponse.builder().card(card).status(Status.SUCCESS).build());
     }
 }
