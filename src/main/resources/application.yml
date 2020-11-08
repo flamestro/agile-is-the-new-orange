@@ -12,3 +12,13 @@ management:
     web:
       exposure:
         include: health,info,prometheus
+
+---
+
+spring:
+  data:
+    mongodb:
+      uri: "${BOARD_STORE}"
+  config:
+    activate:
+      on-profile: prod

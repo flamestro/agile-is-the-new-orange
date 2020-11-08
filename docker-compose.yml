@@ -18,3 +18,5 @@ services:
       - 8080:8080
     depends_on:
       - db
+    environment:
+      BOARD_STORE: mongodb://db:27017/agile_is_the_new_orange
