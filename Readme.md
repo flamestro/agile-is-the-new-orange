@@ -5,7 +5,7 @@ This application is an API that can be used for a KanBan/Scrum board UI.
 
 Start application using:
 
-`docker-compose -f docker-compose.yml up -d`
+`docker-compose -f docker-compose.yml up --build`
 
 # Relevant Dev-Endpoints
 
