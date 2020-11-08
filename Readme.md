@@ -3,7 +3,7 @@
 # Introduction
 This application is an API that can be used for a KanBan/Scrum board UI.
 
-Start mongoDB using:
+Start application using:
 
 `docker-compose -f docker-compose.yml up -d`
 
