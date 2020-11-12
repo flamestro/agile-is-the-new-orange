@@ -11,13 +11,16 @@ import de.flamestro.AgileIsTheNewOrange.web.model.CardResponse;
 import de.flamestro.AgileIsTheNewOrange.web.model.LaneResponse;
 import de.flamestro.AgileIsTheNewOrange.web.model.Status;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@RestController
 @CrossOrigin
 @RequestMapping("/board")
 @AllArgsConstructor
+@Slf4j
 public class BoardController {
 
     private final BoardService boardService;
