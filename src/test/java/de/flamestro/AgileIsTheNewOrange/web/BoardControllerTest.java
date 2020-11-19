@@ -26,30 +26,30 @@ class BoardControllerTest extends AbstractIntegrationTest {
     @Test
     void whenGetBoardIsCalled_thenReturnValidResponse() {
         // when
-        BoardResponse expectedBoard = boardController.createBoard("Mock").getBody();
+        BoardResponse expectedBoard = boardController.createBoard("Mock", "someUser").getBody();
         assert expectedBoard != null;
 
         // do
-        ResponseEntity<BoardResponse> result = boardController.getBoardById(expectedBoard.getBoard().getId());
+        ResponseEntity<BoardResponse> result = boardController.getBoardById(expectedBoard.getBoards().get(0).getId());
 
         // then
         BoardResponse responseBody = result.getBody();
         assert responseBody != null;
-        assertThat(responseBody.getBoard()).usingRecursiveComparison().isEqualTo(expectedBoard.getBoard());
+        assertThat(responseBody.getBoards().get(0)).usingRecursiveComparison().isEqualTo(expectedBoard.getBoards().get(0));
         assertThat(responseBody.getStatus()).isEqualTo(Status.SUCCESS);
     }
 
     @Test
     void whenAddBoardIsCalled_thenReturnValidResponse() {
         // do
-        ResponseEntity<BoardResponse> responseEntity = boardController.createBoard("Mock");
+        ResponseEntity<BoardResponse> responseEntity = boardController.createBoard("Mock", "someUser");
 
         // then
         BoardResponse result = responseEntity.getBody();
         assert result != null;
-        assertThat(result.getBoard().getName()).isEqualTo("Mock");
-        assertThat(result.getBoard().getLanes()).isEqualTo(Collections.emptyList());
-        assertThat(result.getBoard().getId()).isNotBlank();
+        assertThat(result.getBoards().get(0).getName()).isEqualTo("Mock");
+        assertThat(result.getBoards().get(0).getLanes()).isEqualTo(Collections.emptyList());
+        assertThat(result.getBoards().get(0).getId()).isNotBlank();
         assertThat(result.getStatus()).isEqualTo(Status.SUCCESS);
     }
 
@@ -64,11 +64,11 @@ class BoardControllerTest extends AbstractIntegrationTest {
         // then
         BoardResponse result = removeResponseEntity.getBody();
         assert result != null;
-        assertThat(result.getBoard().getName()).isEqualTo("Mock");
-        assertThat(result.getBoard().getLanes()).isEqualTo(Collections.emptyList());
-        assertThat(result.getBoard().getId()).isNotBlank();
+        assertThat(result.getBoards().get(0).getName()).isEqualTo("Mock");
+        assertThat(result.getBoards().get(0).getLanes()).isEqualTo(Collections.emptyList());
+        assertThat(result.getBoards().get(0).getId()).isNotBlank();
         assertThat(result.getStatus()).isEqualTo(Status.SUCCESS);
-        assertThat(result.getBoard()).usingRecursiveComparison().isEqualTo(board);
+        assertThat(result.getBoards().get(0)).usingRecursiveComparison().isEqualTo(board);
     }
 
     @Test
@@ -155,11 +155,11 @@ class BoardControllerTest extends AbstractIntegrationTest {
 
     private Board createMockBoard(){
         // when
-        ResponseEntity<BoardResponse> responseEntity = boardController.createBoard("Mock");
+        ResponseEntity<BoardResponse> responseEntity = boardController.createBoard("Mock", "someUser");
         BoardResponse createResponse = responseEntity.getBody();
         assert createResponse != null;
 
-        Board board = createResponse.getBoard();
+        Board board = createResponse.getBoards().get(0);
         assert board != null;
         assert board.getLanes() != null;
         assert board.getLanes().size() == 0;

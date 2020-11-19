@@ -1,5 +1,6 @@
 package de.flamestro.AgileIsTheNewOrange.board.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.data.annotation.Id;
@@ -13,6 +14,9 @@ import java.util.List;
 public class Board {
     @Id
     public String id;
+
+    @JsonIgnore
+    public String[] allowedUsers;
 
     @NotBlank
     private final String name;

@@ -16,6 +16,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @CrossOrigin
 @RequestMapping("/board")
@@ -28,21 +30,27 @@ public class BoardController {
     private final CardService cardService;
 
     @PostMapping
-    public ResponseEntity<BoardResponse> createBoard(@Param("name") String name){
-        Board board = boardService.createBoard(name);
-        return ResponseEntity.ok(BoardResponse.builder().board(board).status(Status.SUCCESS).build());
+    public ResponseEntity<BoardResponse> createBoard(@Param("name") String name, @Param("userId") String userId){
+        Board board = boardService.createBoard(name, userId);
+        return ResponseEntity.ok(BoardResponse.builder().boards(List.of(board)).status(Status.SUCCESS).build());
+    }
+
+    @GetMapping
+    public ResponseEntity<BoardResponse> getBoardsByUserId(@Param("userId") String userId){
+        List<Board> boards = boardService.getBoardByUserId(userId);
+        return ResponseEntity.ok(BoardResponse.builder().boards(boards).status(Status.SUCCESS).build());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BoardResponse> getBoardById(@PathVariable String id){
+    public ResponseEntity<BoardResponse> getBoardById(@PathVariable String id) {
         Board board = boardService.getBoardById(id);
-        return ResponseEntity.ok(BoardResponse.builder().board(board).status(Status.SUCCESS).build());
+        return ResponseEntity.ok(BoardResponse.builder().boards(List.of(board)).status(Status.SUCCESS).build());
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<BoardResponse> removeBoardById(@PathVariable String id){
         Board board = boardService.removeBoard(id);
-        return ResponseEntity.ok(BoardResponse.builder().board(board).status(Status.SUCCESS).build());
+        return ResponseEntity.ok(BoardResponse.builder().boards(List.of(board)).status(Status.SUCCESS).build());
     }
 
     @PostMapping("/{boardId}/lane")

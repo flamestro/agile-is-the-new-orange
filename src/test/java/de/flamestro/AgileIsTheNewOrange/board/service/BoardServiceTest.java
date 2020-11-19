@@ -15,7 +15,7 @@ class BoardServiceTest extends AbstractIntegrationTest {
     @Test
     void whenCreateBoard_thenBoardIsInMongoDB(@Autowired MongoTemplate mongoTemplate) {
         // do
-        Board board = boardService.createBoard("test_board");
+        Board board = boardService.createBoard("test_board", "someUserId");
 
         // then
         Board result = mongoTemplate.findById(board.getId(), Board.class);

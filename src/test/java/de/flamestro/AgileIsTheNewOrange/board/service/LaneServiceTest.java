@@ -19,7 +19,7 @@ class LaneServiceTest extends AbstractIntegrationTest {
     @Test
     void whenCreateLane_thenReturnLaneSuccessfully() {
         // when
-        Board board = boardService.createBoard("test_board");
+        Board board = boardService.createBoard("test_board", "someUserId");
 
         // do
         Lane lane = laneService.createLane("test_lane", board);
@@ -34,7 +34,7 @@ class LaneServiceTest extends AbstractIntegrationTest {
     @Test
     void whenLaneRemoved_thenBoardDoesNotContainLane() {
         // when
-        Board board = boardService.createBoard("test_board");
+        Board board = boardService.createBoard("test_board", "someUserId");
         Lane lane = laneService.createLane("test_lane", board);
 
         // do

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -18,8 +19,8 @@ public class BoardService {
     private final BoardRepository boardRepository;
 
     @Transactional
-    public Board createBoard(String name){
-        Board board = Board.builder().name(name).lanes(new ArrayList<>()).build();
+    public Board createBoard(String name, String userId){
+        Board board = Board.builder().name(name).allowedUsers(new String[]{userId}).lanes(new ArrayList<>()).build();
         boardRepository.save(board);
         log.info("created board with id: {}", board.getId());
         return board;
@@ -36,6 +37,10 @@ public class BoardService {
     public void addLane(Board board, Lane lane){
         board.getLanes().add(lane);
         boardRepository.save(board);
+    }
+
+    public List<Board> getBoardByUserId(String userId){
+        return boardRepository.findBoardByAllowedUsersContains(userId);
     }
 
     public Board getBoardById(String id){
