@@ -16,7 +16,7 @@ public class Board {
     public String id;
 
     @JsonIgnore
-    public String[] allowedUsers;
+    private String[] allowedUsers;
 
     @NotBlank
     private final String name;

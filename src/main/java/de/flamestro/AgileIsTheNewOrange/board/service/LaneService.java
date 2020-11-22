@@ -4,6 +4,7 @@ import de.flamestro.AgileIsTheNewOrange.board.model.Board;
 import de.flamestro.AgileIsTheNewOrange.board.model.Card;
 import de.flamestro.AgileIsTheNewOrange.board.model.Lane;
 import de.flamestro.AgileIsTheNewOrange.board.repository.BoardRepository;
+import de.flamestro.AgileIsTheNewOrange.board.repository.CardRepository;
 import de.flamestro.AgileIsTheNewOrange.board.repository.LaneRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,10 +22,11 @@ public class LaneService {
 
     private final LaneRepository laneRepository;
     private final BoardRepository boardRepository;
+    private final CardRepository cardRepository;
     private final BoardService boardService;
 
     @Transactional
-    public Lane createLane(String name, Board board){
+    public Lane createLane(String name, Board board) {
         Lane lane = Lane.builder().name(name).cards(new ArrayList<>()).build();
         laneRepository.save(lane);
         boardService.addLane(board, lane);
@@ -33,7 +35,8 @@ public class LaneService {
     }
 
     @Transactional
-    public Lane removeLane(Lane lane, Board board){
+    public Lane removeLane(Lane lane, Board board) {
+        cardRepository.deleteAll(lane.getCards());
         laneRepository.delete(lane);
         board.getLanes().removeIf(laneInBoard -> laneInBoard.getId().equals(lane.getId()));
         boardRepository.save(board);
@@ -42,7 +45,7 @@ public class LaneService {
     }
 
     @Transactional
-    public void addCard(Board board, Lane lane, Card card){
+    public void addCard(Board board, Lane lane, Card card) {
         List<Lane> laneList = board.getLanes()
                 .stream()
                 .filter(laneInBoard -> laneInBoard.getId().equals(lane.getId()))
@@ -51,7 +54,7 @@ public class LaneService {
         boardRepository.save(board);
     }
 
-    public Lane getLaneById(String id){
+    public Lane getLaneById(String id) {
         return laneRepository.findLaneById(id);
     }
 }

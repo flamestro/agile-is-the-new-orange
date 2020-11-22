@@ -3,6 +3,8 @@ package de.flamestro.AgileIsTheNewOrange.board.service;
 import de.flamestro.AgileIsTheNewOrange.board.model.Board;
 import de.flamestro.AgileIsTheNewOrange.board.model.Lane;
 import de.flamestro.AgileIsTheNewOrange.board.repository.BoardRepository;
+import de.flamestro.AgileIsTheNewOrange.board.repository.CardRepository;
+import de.flamestro.AgileIsTheNewOrange.board.repository.LaneRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -17,6 +19,8 @@ import java.util.List;
 public class BoardService {
 
     private final BoardRepository boardRepository;
+    private final LaneRepository laneRepository;
+    private final CardRepository cardRepository;
 
     @Transactional
     public Board createBoard(String name, String userId){
@@ -29,6 +33,11 @@ public class BoardService {
     @Transactional
     public Board removeBoard(String id){
         Board board = boardRepository.findBoardById(id);
+        List<Lane> lanes = board.getLanes();
+        for (Lane lane: lanes){
+            cardRepository.deleteAll(lane.getCards());
+        }
+        laneRepository.deleteAll(lanes);
         boardRepository.delete(board);
         return board;
     }
