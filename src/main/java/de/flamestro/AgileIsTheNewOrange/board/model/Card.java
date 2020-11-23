@@ -1,19 +1,25 @@
 package de.flamestro.AgileIsTheNewOrange.board.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import org.springframework.data.annotation.Id;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
+import java.io.Serializable;
 
+@NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Builder
-public class Card {
-    @Id
+public class Card implements Serializable {
     public String id;
 
     @NotBlank
-    private final String name;
+    private String name;
 
-    private final String description;
+    private String description;
+
+    private Lane lane;
+
 }
