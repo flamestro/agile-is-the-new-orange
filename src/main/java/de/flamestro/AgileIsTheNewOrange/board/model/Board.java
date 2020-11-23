@@ -3,6 +3,7 @@ package de.flamestro.AgileIsTheNewOrange.board.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.annotation.Id;
 
 import javax.validation.constraints.NotBlank;
@@ -11,6 +12,7 @@ import java.util.List;
 
 @Getter
 @Builder
+@Setter
 public class Board {
     @Id
     public String id;
@@ -22,5 +24,5 @@ public class Board {
     private final String name;
 
     @NotNull
-    private final List<Lane> lanes;
+    private List<Lane> lanes;
 }

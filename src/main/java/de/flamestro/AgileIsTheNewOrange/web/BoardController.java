@@ -6,10 +6,7 @@ import de.flamestro.AgileIsTheNewOrange.board.model.Lane;
 import de.flamestro.AgileIsTheNewOrange.board.service.BoardService;
 import de.flamestro.AgileIsTheNewOrange.board.service.CardService;
 import de.flamestro.AgileIsTheNewOrange.board.service.LaneService;
-import de.flamestro.AgileIsTheNewOrange.web.model.BoardResponse;
-import de.flamestro.AgileIsTheNewOrange.web.model.CardResponse;
-import de.flamestro.AgileIsTheNewOrange.web.model.LaneResponse;
-import de.flamestro.AgileIsTheNewOrange.web.model.Status;
+import de.flamestro.AgileIsTheNewOrange.web.model.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.repository.query.Param;
@@ -84,6 +81,18 @@ public class BoardController {
             Card card = cardService.createCard(name, boardService.getBoardById(boardId), laneService.getLaneById(laneId));
             return ResponseEntity.ok(CardResponse.builder().card(card).status(Status.SUCCESS).build());
         }
+    }
+
+    @PutMapping("/moveCard")
+    public ResponseEntity<LaneResponse> moveCard(@RequestBody MoveCardRequest request) {
+        laneService.moveCard(
+                cardService.getCardById(request.getSourceCardId()),
+                laneService.getLaneById(request.getSourceLaneId()),
+                boardService.getBoardById(request.getSourceBoardId()),
+                request.getTargetCardId(),
+                laneService.getLaneById(request.getTargetLaneId()),
+                boardService.getBoardById(request.getTargetBoardId()));
+        return ResponseEntity.ok(LaneResponse.builder().status(Status.SUCCESS).build());
     }
 
     @DeleteMapping("/{boardId}/lane/{laneId}/card/{cardId}")

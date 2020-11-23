@@ -54,6 +54,30 @@ public class LaneService {
         boardRepository.save(board);
     }
 
+    @Transactional
+    public void moveCard(Card sourceCard, Lane sourceLane, Board sourceBoard, String targetCard, Lane targetLane, Board targetBoard) {
+
+        Card copyOfSourceCard = Card.builder().description(sourceCard.getDescription()).name(sourceCard.getName()).build();
+        cardRepository.save(copyOfSourceCard);
+
+        List<Lane> laneList = targetBoard.getLanes()
+                .stream()
+                .filter(laneInBoard -> laneInBoard.getId().equals(targetLane.getId()))
+                .collect(Collectors.toList());
+        Card targetInList = laneList.get(0).getCards().stream().filter(c -> c.getId().equals(targetCard)).findAny().get();
+        int index = laneList.get(0).getCards().indexOf(targetInList);
+        laneList.get(0).getCards().add(index, copyOfSourceCard);
+        boardRepository.save(targetBoard);
+
+        Board newSource = boardRepository.findBoardById(sourceBoard.getId());
+        List<Lane> singleEntryList = newSource.getLanes().stream().filter(laneInBoard -> laneInBoard.getId().equals(sourceLane.getId())).collect(Collectors.toList());
+        Lane correctLane = singleEntryList.get(0);
+        correctLane.getCards().removeIf(cardInLane -> cardInLane.getId().equals(sourceCard.getId()));
+        laneRepository.save(sourceLane);
+        boardRepository.save(sourceBoard);
+        boardRepository.save(newSource);
+    }
+
     public Lane getLaneById(String id) {
         return laneRepository.findLaneById(id);
     }
