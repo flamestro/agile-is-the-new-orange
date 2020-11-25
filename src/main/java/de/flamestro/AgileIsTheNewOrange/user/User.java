@@ -12,7 +12,7 @@ public class User {
 
     public enum Role{
         USER, // can add boards, move cards, rename boards ...
-        ARCHIVE_MASTER, // can archive boards and all rights of a USER
+        ARCHIVE_OWNER, // can archive boards and all rights of a USER
         SUPERVISOR // can delete boards and all rights of a ARCHIVE_MASTER
     }
 }
