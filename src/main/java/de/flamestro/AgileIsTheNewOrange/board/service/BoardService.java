@@ -29,12 +29,12 @@ public class BoardService {
         return board;
     }
 
-    public void addLane(Board board, Lane lane){
+    public void addLaneToBoard(Board board, Lane lane){
         board.getLanes().add(lane);
         boardRepository.save(board);
     }
 
-    public List<Board> getBoardByUserId(String userId){
+    public List<Board> getBoardsByUserId(String userId){
         return boardRepository.findBoardByAllowedUsersContains(userId);
     }
 

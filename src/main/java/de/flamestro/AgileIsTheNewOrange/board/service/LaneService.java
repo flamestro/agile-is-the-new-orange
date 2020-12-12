@@ -22,8 +22,12 @@ public class LaneService {
     private final BoardService boardService;
 
     public Lane createLane(String name, Board board) {
-        Lane lane = Lane.builder().name(name).id(UUID.randomUUID().toString()).cards(new ArrayList<>()).build();
-        boardService.addLane(board, lane);
+        Lane lane = Lane.builder()
+                .name(name)
+                .id(UUID.randomUUID().toString())
+                .cards(new ArrayList<>())
+                .build();
+        boardService.addLaneToBoard(board, lane);
         log.info("added lane(id={}) to board(id={})", lane.getId(), board.getId());
         return lane;
     }

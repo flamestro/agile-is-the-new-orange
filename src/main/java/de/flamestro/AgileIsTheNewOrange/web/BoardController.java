@@ -42,8 +42,8 @@ public class BoardController {
 
     @GetMapping
     public ResponseEntity<BoardResponse> getBoardsByUserId(@Param("userId") String userId) {
-        List<Board> boards = boardService.getBoardByUserId(userId);
-        return ResponseEntity.ok(BoardResponse.builder().boards(boards).status(Status.SUCCESS).build());
+        List<Board> boardsOfUser = boardService.getBoardsByUserId(userId);
+        return ResponseEntity.ok(BoardResponse.builder().boards(boardsOfUser).status(Status.SUCCESS).build());
     }
 
     @GetMapping("/{id}")
