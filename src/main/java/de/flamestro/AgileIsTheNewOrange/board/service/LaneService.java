@@ -4,6 +4,7 @@ import de.flamestro.AgileIsTheNewOrange.board.model.Board;
 import de.flamestro.AgileIsTheNewOrange.board.model.Card;
 import de.flamestro.AgileIsTheNewOrange.board.model.Lane;
 import de.flamestro.AgileIsTheNewOrange.exceptions.InvalidNameException;
+import de.flamestro.AgileIsTheNewOrange.web.model.MoveCardRequest;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -39,7 +40,14 @@ public class LaneService {
         saveBoard(board);
     }
 
-    public void moveCard(Card sourceCard, Lane sourceLane, Board sourceBoard, Card targetCard, Lane targetLane, Board targetBoard) {
+    public void moveCard(MoveCardRequest moveCardRequest) {
+        Lane sourceLane = getLaneById(moveCardRequest.getSourceLaneId());
+        Card sourceCard = getRequestedCardByIdFormLane(moveCardRequest.getSourceCardId(), sourceLane);
+        Board sourceBoard = boardService.getBoardById(moveCardRequest.getSourceBoardId());
+        Lane targetLane = getLaneById(moveCardRequest.getTargetLaneId());
+        Card targetCard = getRequestedCardByIdFormLane(moveCardRequest.getTargetCardId(), targetLane);
+        Board targetBoard = boardService.getBoardById(moveCardRequest.getTargetBoardId());
+
         Card copyOfSourceCard = sourceCard.copyWithNewId();
         Lane lane = getRequestedLaneFromBoard(targetBoard, targetLane);
 
@@ -85,7 +93,7 @@ public class LaneService {
     }
 
     private void addCardAfterTargetCard(Card card, Card otherCard, Lane targetLane) {
-        Card requestedCardFormLane = getRequestedCardFormLane(otherCard, targetLane);
+        Card requestedCardFormLane = getRequestedCardByIdFormLane(otherCard.getId(), targetLane);
         int targetIndex = targetLane.getCards().indexOf(requestedCardFormLane);
         targetLane.getCards().add(targetIndex, card);
     }
@@ -111,8 +119,8 @@ public class LaneService {
         }
     }
 
-    private Card getRequestedCardFormLane(Card targetCard, Lane lane) {
-        Optional<Card> requestedCard = lane.getCards().stream().filter(c -> c.getId().equals(targetCard.getId())).findFirst();
+    private Card getRequestedCardByIdFormLane(String targetCardId, Lane lane) {
+        Optional<Card> requestedCard = lane.getCards().stream().filter(c -> c.getId().equals(targetCardId)).findFirst();
         if (requestedCard.isPresent()) {
             return requestedCard.get();
         } else {
