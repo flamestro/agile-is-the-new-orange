@@ -4,6 +4,7 @@ import de.flamestro.AgileIsTheNewOrange.board.model.Board;
 import de.flamestro.AgileIsTheNewOrange.board.model.Card;
 import de.flamestro.AgileIsTheNewOrange.board.model.Lane;
 import de.flamestro.AgileIsTheNewOrange.board.repository.BoardRepository;
+import de.flamestro.AgileIsTheNewOrange.exceptions.InvalidNameException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -118,6 +119,9 @@ public class LaneService {
     }
 
     private Lane buildLane(String name) {
+        if(name.isBlank()){
+            throw new InvalidNameException("Name is blank");
+        }
         return Lane.builder()
                 .name(name)
                 .id(UUID.randomUUID().toString())

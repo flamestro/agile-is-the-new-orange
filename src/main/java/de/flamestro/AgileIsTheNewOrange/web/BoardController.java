@@ -31,13 +31,8 @@ public class BoardController {
 
     @PostMapping
     public ResponseEntity<BoardResponse> createBoard(@Param("name") String name, @Param("userId") String userId) {
-        // TODO: use validators for validation
-        if (name.isBlank()) {
-            return ResponseEntity.badRequest().body(BoardResponse.builder().status(Status.INVALID_NAME).build());
-        } else {
-            Board board = boardService.createBoard(name, userId);
-            return ResponseEntity.ok(BoardResponse.builder().boards(List.of(board)).status(Status.SUCCESS).build());
-        }
+        Board board = boardService.createBoard(name, userId);
+        return ResponseEntity.ok(BoardResponse.builder().boards(List.of(board)).status(Status.SUCCESS).build());
     }
 
     @GetMapping
@@ -60,13 +55,8 @@ public class BoardController {
 
     @PostMapping("/{boardId}/lane")
     public ResponseEntity<LaneResponse> addLaneToBoard(@PathVariable String boardId, @Param("name") String name) {
-        // TODO: use validators for validation
-        if (name.isBlank()) {
-            return ResponseEntity.badRequest().body(LaneResponse.builder().status(Status.INVALID_NAME).build());
-        } else {
-            Lane lane = laneService.createLaneInBoard(name, boardService.getBoardById(boardId));
-            return ResponseEntity.ok(LaneResponse.builder().lane(lane).status(Status.SUCCESS).build());
-        }
+        Lane lane = laneService.createLaneInBoard(name, boardService.getBoardById(boardId));
+        return ResponseEntity.ok(LaneResponse.builder().lane(lane).status(Status.SUCCESS).build());
     }
 
     @DeleteMapping("/{boardId}/lane/{laneId}")
@@ -77,13 +67,8 @@ public class BoardController {
 
     @PostMapping("/{boardId}/lane/{laneId}/card")
     public ResponseEntity<CardResponse> addCardToLane(@PathVariable String boardId, @PathVariable String laneId, @Param("name") String name) {
-        // TODO: use validators for validation
-        if (name.isBlank()) {
-            return ResponseEntity.badRequest().body(CardResponse.builder().status(Status.INVALID_NAME).build());
-        } else {
-            Card card = cardService.createCard(name, boardService.getBoardById(boardId), laneService.getLaneById(laneId));
-            return ResponseEntity.ok(CardResponse.builder().card(card).status(Status.SUCCESS).build());
-        }
+        Card card = cardService.createCard(name, boardService.getBoardById(boardId), laneService.getLaneById(laneId));
+        return ResponseEntity.ok(CardResponse.builder().card(card).status(Status.SUCCESS).build());
     }
 
     @DeleteMapping("/{boardId}/lane/{laneId}/card/{cardId}")
