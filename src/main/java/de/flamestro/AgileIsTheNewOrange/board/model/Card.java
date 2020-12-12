@@ -19,7 +19,4 @@ public class Card implements Serializable {
     private String name;
 
     private String description;
-
-    private Lane lane;
-
 }

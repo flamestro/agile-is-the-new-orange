@@ -20,9 +20,6 @@ public class Lane implements Serializable {
     @NotBlank
     private String name;
 
-    private Board board;
-
     @NotNull
     private List<Card> cards;
-
 }
