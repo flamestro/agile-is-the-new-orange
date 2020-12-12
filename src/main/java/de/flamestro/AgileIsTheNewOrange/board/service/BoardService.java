@@ -50,10 +50,6 @@ public class BoardService {
         return boardRepository.findBoardByAllowedUsersContains(userId);
     }
 
-    public List<Board> getAllBoards() {
-        return boardRepository.findAll();
-    }
-
     public Board getBoardById(String id) {
         return boardRepository.findBoardById(id);
     }

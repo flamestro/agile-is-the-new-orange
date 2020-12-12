@@ -10,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -21,37 +20,34 @@ public class LaneService {
 
     private final BoardService boardService;
 
-    public Lane createLaneInBoard(String name, Board board) {
+    public Lane createLaneInBoard(Board board, String name) {
         Lane lane = buildLane(name);
         boardService.addLaneToBoard(board, lane);
         log.info("added lane(id={}) to board(id={})", lane.getId(), board.getId());
         return lane;
     }
 
-    public Lane removeLaneFromBoard(Lane lane, Board board) {
-        deleteLaneFromBoard(lane, board);
+    public void removeLaneFromBoard(Board board, String laneId) {
+        deleteLaneFromBoard(laneId, board);
         saveBoard(board);
-        return lane;
     }
 
     public void addCard(Board board, Lane lane, Card card) {
-        Lane laneToAddCard = getRequestedLaneFromBoard(board, lane);
-        addCardToLane(card, laneToAddCard);
+        addCardToLane(card, lane);
         saveBoard(board);
     }
 
     public void moveCard(MoveCardRequest moveCardRequest) {
-        Lane sourceLane = getLaneById(moveCardRequest.getSourceLaneId());
-        Card sourceCard = getRequestedCardByIdFormLane(moveCardRequest.getSourceCardId(), sourceLane);
         Board sourceBoard = boardService.getBoardById(moveCardRequest.getSourceBoardId());
-        Lane targetLane = getLaneById(moveCardRequest.getTargetLaneId());
-        Card targetCard = getRequestedCardByIdFormLane(moveCardRequest.getTargetCardId(), targetLane);
+        Lane sourceLane = getLaneFromBoard(sourceBoard, moveCardRequest.getSourceLaneId());
+        Card sourceCard = getRequestedCardByIdFormLane(moveCardRequest.getSourceCardId(), sourceLane);
         Board targetBoard = boardService.getBoardById(moveCardRequest.getTargetBoardId());
+        Lane targetLane = getLaneFromBoard(targetBoard, moveCardRequest.getTargetLaneId());
+        Card targetCard = getRequestedCardByIdFormLane(moveCardRequest.getTargetCardId(), targetLane);
 
         Card copyOfSourceCard = sourceCard.copyWithNewId();
-        Lane lane = getRequestedLaneFromBoard(targetBoard, targetLane);
 
-        addCardToCorrectPosition(targetCard, copyOfSourceCard, lane);
+        addCardToCorrectPosition(targetCard, copyOfSourceCard, targetLane);
         saveBoard(targetBoard);
 
         removeCardFromBoard(sourceCard, sourceLane, sourceBoard);
@@ -59,25 +55,9 @@ public class LaneService {
 
     private void removeCardFromBoard(Card sourceCard, Lane sourceLane, Board sourceBoard) {
         Board updatedSourceBoard = boardService.getBoardById(sourceBoard.getId());
-        Lane laneToRemoveSourceCard = getRequestedLaneFromBoard(updatedSourceBoard, sourceLane);
-        removeCardFromLane(sourceCard, laneToRemoveSourceCard);
+        Lane laneToRemoveSourceCard = getLaneFromBoard(updatedSourceBoard, sourceLane.getId());
+        removeCardFromLane(sourceCard.getId(), laneToRemoveSourceCard);
         saveBoard(updatedSourceBoard);
-    }
-
-    public Lane getLaneById(String id) {
-        for (Board board : getAllBoards()) {
-            for (Lane lane : board.getLanes()) {
-                if (lane.getId().equals(id)) {
-                    return lane;
-                }
-            }
-        }
-        //TODO: HANDLE THIS
-        return null;
-    }
-
-    public List<Board> getAllBoards() {
-        return boardService.getAllBoards();
     }
 
     private void addCardToCorrectPosition(Card targetCard, Card sourceCard, Lane lane) {
@@ -88,8 +68,8 @@ public class LaneService {
         }
     }
 
-    public void removeCardFromLane(Card sourceCard, Lane laneToRemoveSourceCard) {
-        laneToRemoveSourceCard.getCards().removeIf(cardInLane -> cardInLane.getId().equals(sourceCard.getId()));
+    public void removeCardFromLane(String sourceCardId, Lane laneToRemoveSourceCard) {
+        laneToRemoveSourceCard.getCards().removeIf(cardInLane -> cardInLane.getId().equals(sourceCardId));
     }
 
     private void addCardAfterTargetCard(Card card, Card otherCard, Lane targetLane) {
@@ -107,10 +87,10 @@ public class LaneService {
                 .add(card);
     }
 
-    public Lane getRequestedLaneFromBoard(Board board, Lane lane) {
+    public Lane getLaneFromBoard(Board board, String laneId) {
         Optional<Lane> requestedLane = board.getLanes()
                 .stream()
-                .filter(laneInBoard -> laneInBoard.getId().equals(lane.getId()))
+                .filter(laneInBoard -> laneInBoard.getId().equals(laneId))
                 .findFirst();
         if (requestedLane.isPresent()) {
             return requestedLane.get();
@@ -121,15 +101,11 @@ public class LaneService {
 
     private Card getRequestedCardByIdFormLane(String targetCardId, Lane lane) {
         Optional<Card> requestedCard = lane.getCards().stream().filter(c -> c.getId().equals(targetCardId)).findFirst();
-        if (requestedCard.isPresent()) {
-            return requestedCard.get();
-        } else {
-            throw new RuntimeException("Requested Lane was not found in Board");
-        }
+        return requestedCard.orElse(null);
     }
 
-    private void deleteLaneFromBoard(Lane lane, Board board) {
-        board.getLanes().removeIf(laneInBoard -> laneInBoard.getId().equals(lane.getId()));
+    private void deleteLaneFromBoard(String laneId, Board board) {
+        board.getLanes().removeIf(laneInBoard -> laneInBoard.getId().equals(laneId));
     }
 
     private Lane buildLane(String name) {

@@ -55,25 +55,25 @@ public class BoardController {
 
     @PostMapping("/{boardId}/lane")
     public ResponseEntity<LaneResponse> addLaneToBoard(@PathVariable String boardId, @Param("name") String name) {
-        Lane lane = laneService.createLaneInBoard(name, boardService.getBoardById(boardId));
+        Lane lane = laneService.createLaneInBoard(boardService.getBoardById(boardId), name);
         return ResponseEntity.ok(LaneResponse.builder().lane(lane).status(Status.SUCCESS).build());
     }
 
     @DeleteMapping("/{boardId}/lane/{laneId}")
     public ResponseEntity<LaneResponse> removeLaneFromBoard(@PathVariable String boardId, @PathVariable String laneId) {
-        Lane lane = laneService.removeLaneFromBoard(laneService.getLaneById(laneId), boardService.getBoardById(boardId));
-        return ResponseEntity.ok(LaneResponse.builder().lane(lane).status(Status.SUCCESS).build());
+        laneService.removeLaneFromBoard(boardService.getBoardById(boardId), laneId);
+        return ResponseEntity.ok(LaneResponse.builder().status(Status.SUCCESS).build());
     }
 
     @PostMapping("/{boardId}/lane/{laneId}/card")
     public ResponseEntity<CardResponse> addCardToLane(@PathVariable String boardId, @PathVariable String laneId, @Param("name") String name) {
-        Card card = cardService.createCard(name, boardService.getBoardById(boardId), laneService.getLaneById(laneId));
+        Card card = cardService.createCard(boardService.getBoardById(boardId), laneId, name);
         return ResponseEntity.ok(CardResponse.builder().card(card).status(Status.SUCCESS).build());
     }
 
     @DeleteMapping("/{boardId}/lane/{laneId}/card/{cardId}")
     public ResponseEntity<CardResponse> removeCardFromLane(@PathVariable String boardId, @PathVariable String laneId, @PathVariable String cardId) {
-        Card card = cardService.removeCard(boardService.getBoardById(boardId), laneService.getLaneById(laneId), cardService.getCardById(cardId));
+        Card card = cardService.removeCard(boardService.getBoardById(boardId), laneId, cardId);
         return ResponseEntity.ok(CardResponse.builder().card(card).status(Status.SUCCESS).build());
     }
 }

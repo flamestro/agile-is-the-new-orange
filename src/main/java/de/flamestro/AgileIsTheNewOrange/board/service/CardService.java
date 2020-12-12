@@ -17,32 +17,18 @@ public class CardService {
 
     private final LaneService laneService;
 
-    public Card createCard(String name, Board board, Lane lane) {
+    public Card createCard(Board board, String laneId, String name) {
+        Lane lane = laneService.getLaneFromBoard(board, laneId);
         Card card = buildCard(name);
         laneService.addCard(board, lane, card);
         log.info("added card(id={}) to lane(id={})", card.getId(), lane.getId());
         return card;
     }
 
-    public Card removeCard(Board board, Lane lane, Card card) {
-        Lane requestedLane = laneService.getRequestedLaneFromBoard(board, lane);
-        laneService.removeCardFromLane(card, requestedLane);
+    public Card removeCard(Board board, String laneId, String cardId) {
+        laneService.removeCardFromLane(cardId, laneService.getLaneFromBoard(board, laneId));
         saveBoard(board);
-        log.info("removed card(id={}) from lane(id={}) in board(id={})", card.getId(), lane.getId(), board.getId());
-        return card;
-    }
-
-    public Card getCardById(String id) {
-        for (Board board : laneService.getAllBoards()) {
-            for (Lane lane : board.getLanes()) {
-                for (Card card : lane.getCards()) {
-                    if (card.getId().equals(id)) {
-                        return card;
-                    }
-                }
-            }
-        }
-        //TODO; HANDLE THIS
+        log.info("removed card(id={}) from lane(id={}) in board(id={})", cardId, laneId, board.getId());
         return null;
     }
 
