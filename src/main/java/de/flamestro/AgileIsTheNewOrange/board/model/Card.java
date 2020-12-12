@@ -22,6 +22,10 @@ public class Card implements Serializable {
     private String description;
 
     public Card copyWithNewId() {
-        return Card.builder().description(this.getDescription()).id(UUID.randomUUID().toString()).name(this.getName()).build();
+        return Card.builder()
+                .description(this.getDescription())
+                .id(UUID.randomUUID().toString())
+                .name(this.getName())
+                .build();
     }
 }

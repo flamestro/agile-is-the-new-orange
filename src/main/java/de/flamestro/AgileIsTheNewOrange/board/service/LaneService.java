@@ -3,13 +3,13 @@ package de.flamestro.AgileIsTheNewOrange.board.service;
 import de.flamestro.AgileIsTheNewOrange.board.model.Board;
 import de.flamestro.AgileIsTheNewOrange.board.model.Card;
 import de.flamestro.AgileIsTheNewOrange.board.model.Lane;
-import de.flamestro.AgileIsTheNewOrange.board.repository.BoardRepository;
 import de.flamestro.AgileIsTheNewOrange.exceptions.InvalidNameException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -18,7 +18,6 @@ import java.util.UUID;
 @Slf4j
 public class LaneService {
 
-    private final BoardRepository boardRepository;
     private final BoardService boardService;
 
     public Lane createLaneInBoard(String name, Board board) {
@@ -47,14 +46,18 @@ public class LaneService {
         addCardToCorrectPosition(targetCard, copyOfSourceCard, lane);
         saveBoard(targetBoard);
 
-        Board updatedSourceBoard = boardRepository.findBoardById(sourceBoard.getId());
+        removeCardFromBoard(sourceCard, sourceLane, sourceBoard);
+    }
+
+    private void removeCardFromBoard(Card sourceCard, Lane sourceLane, Board sourceBoard) {
+        Board updatedSourceBoard = boardService.getBoardById(sourceBoard.getId());
         Lane laneToRemoveSourceCard = getRequestedLaneFromBoard(updatedSourceBoard, sourceLane);
         removeCardFromLane(sourceCard, laneToRemoveSourceCard);
         saveBoard(updatedSourceBoard);
     }
 
     public Lane getLaneById(String id) {
-        for (Board board : boardRepository.findAll()) {
+        for (Board board : getAllBoards()) {
             for (Lane lane : board.getLanes()) {
                 if (lane.getId().equals(id)) {
                     return lane;
@@ -65,6 +68,10 @@ public class LaneService {
         return null;
     }
 
+    public List<Board> getAllBoards() {
+        return boardService.getAllBoards();
+    }
+
     private void addCardToCorrectPosition(Card targetCard, Card sourceCard, Lane lane) {
         if (targetCard != null) {
             addCardAfterTargetCard(sourceCard, targetCard, lane);
@@ -73,7 +80,7 @@ public class LaneService {
         }
     }
 
-    private void removeCardFromLane(Card sourceCard, Lane laneToRemoveSourceCard) {
+    public void removeCardFromLane(Card sourceCard, Lane laneToRemoveSourceCard) {
         laneToRemoveSourceCard.getCards().removeIf(cardInLane -> cardInLane.getId().equals(sourceCard.getId()));
     }
 
@@ -83,8 +90,8 @@ public class LaneService {
         targetLane.getCards().add(targetIndex, card);
     }
 
-    private void saveBoard(Board board) {
-        boardRepository.save(board);
+    public void saveBoard(Board board) {
+        boardService.saveBoard(board);
     }
 
     private void addCardToLane(Card card, Lane lane) {
@@ -92,7 +99,7 @@ public class LaneService {
                 .add(card);
     }
 
-    private Lane getRequestedLaneFromBoard(Board board, Lane lane) {
+    public Lane getRequestedLaneFromBoard(Board board, Lane lane) {
         Optional<Lane> requestedLane = board.getLanes()
                 .stream()
                 .filter(laneInBoard -> laneInBoard.getId().equals(lane.getId()))
@@ -113,13 +120,12 @@ public class LaneService {
         }
     }
 
-
     private void deleteLaneFromBoard(Lane lane, Board board) {
         board.getLanes().removeIf(laneInBoard -> laneInBoard.getId().equals(lane.getId()));
     }
 
     private Lane buildLane(String name) {
-        if(name.isBlank()){
+        if (name.isBlank()) {
             throw new InvalidNameException("Name is blank");
         }
         return Lane.builder()

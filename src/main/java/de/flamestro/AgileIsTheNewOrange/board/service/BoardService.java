@@ -18,7 +18,7 @@ public class BoardService {
 
     private final BoardRepository boardRepository;
 
-    public Board createBoard(String name, String userId){
+    public Board createBoard(String name, String userId) {
         Board board = buildBoard(name, userId);
         boardRepository.save(board);
         log.info("created board with id: {}", board.getId());
@@ -26,27 +26,35 @@ public class BoardService {
     }
 
     private Board buildBoard(String name, String userId) {
-        if(name.isBlank()){
+        if (name.isBlank()) {
             throw new InvalidNameException("Name is blank");
         }
         return Board.builder().name(name).allowedUsers(new String[]{userId}).lanes(new ArrayList<>()).build();
     }
 
-    public Board removeBoard(Board board){
+    public void saveBoard(Board board) {
+        boardRepository.save(board);
+    }
+
+    public Board removeBoard(Board board) {
         boardRepository.delete(board);
         return board;
     }
 
-    public void addLaneToBoard(Board board, Lane lane){
+    public void addLaneToBoard(Board board, Lane lane) {
         board.getLanes().add(lane);
         boardRepository.save(board);
     }
 
-    public List<Board> getBoardsByUserId(String userId){
+    public List<Board> getBoardsByUserId(String userId) {
         return boardRepository.findBoardByAllowedUsersContains(userId);
     }
 
-    public Board getBoardById(String id){
+    public List<Board> getAllBoards() {
+        return boardRepository.findAll();
+    }
+
+    public Board getBoardById(String id) {
         return boardRepository.findBoardById(id);
     }
 }

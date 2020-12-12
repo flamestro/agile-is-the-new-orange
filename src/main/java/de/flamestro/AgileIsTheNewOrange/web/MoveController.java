@@ -23,14 +23,14 @@ public class MoveController {
     private final CardService cardService;
 
     @PutMapping("/moveCard")
-    public ResponseEntity<LaneResponse> moveCard(@RequestBody MoveCardRequest request) {
+    public ResponseEntity<LaneResponse> moveCard(@RequestBody MoveCardRequest moveCardRequest) {
         laneService.moveCard(
-                cardService.getCardById(request.getSourceCardId()),
-                laneService.getLaneById(request.getSourceLaneId()),
-                boardService.getBoardById(request.getSourceBoardId()),
-                cardService.getCardById(request.getTargetCardId()),
-                laneService.getLaneById(request.getTargetLaneId()),
-                boardService.getBoardById(request.getTargetBoardId()));
+                cardService.getCardById(moveCardRequest.getSourceCardId()),
+                laneService.getLaneById(moveCardRequest.getSourceLaneId()),
+                boardService.getBoardById(moveCardRequest.getSourceBoardId()),
+                cardService.getCardById(moveCardRequest.getTargetCardId()),
+                laneService.getLaneById(moveCardRequest.getTargetLaneId()),
+                boardService.getBoardById(moveCardRequest.getTargetBoardId()));
         return ResponseEntity.ok(LaneResponse.builder().status(Status.SUCCESS).build());
     }
 }
