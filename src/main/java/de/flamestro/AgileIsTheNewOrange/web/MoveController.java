@@ -28,7 +28,7 @@ public class MoveController {
                 cardService.getCardById(request.getSourceCardId()),
                 laneService.getLaneById(request.getSourceLaneId()),
                 boardService.getBoardById(request.getSourceBoardId()),
-                request.getTargetCardId(),
+                cardService.getCardById(request.getTargetCardId()),
                 laneService.getLaneById(request.getTargetLaneId()),
                 boardService.getBoardById(request.getTargetBoardId()));
         return ResponseEntity.ok(LaneResponse.builder().status(Status.SUCCESS).build());

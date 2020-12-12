@@ -9,9 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -21,55 +20,36 @@ public class LaneService {
     private final BoardRepository boardRepository;
     private final BoardService boardService;
 
-    public Lane createLane(String name, Board board) {
-        Lane lane = Lane.builder()
-                .name(name)
-                .id(UUID.randomUUID().toString())
-                .cards(new ArrayList<>())
-                .build();
+    public Lane createLaneInBoard(String name, Board board) {
+        Lane lane = buildLane(name);
         boardService.addLaneToBoard(board, lane);
         log.info("added lane(id={}) to board(id={})", lane.getId(), board.getId());
         return lane;
     }
 
-    public Lane removeLane(Lane lane, Board board) {
-        board.getLanes().removeIf(laneInBoard -> laneInBoard.getId().equals(lane.getId()));
-        boardRepository.save(board);
-        log.info("removed lane(id={}) from board(id={})", lane.getId(), board.getId());
+    public Lane removeLaneFromBoard(Lane lane, Board board) {
+        deleteLaneFromBoard(lane, board);
+        saveBoard(board);
         return lane;
     }
 
     public void addCard(Board board, Lane lane, Card card) {
-        List<Lane> laneList = board.getLanes()
-                .stream()
-                .filter(laneInBoard -> laneInBoard.getId().equals(lane.getId()))
-                .collect(Collectors.toList());
-        laneList.get(0).getCards().add(card);
-        boardRepository.save(board);
+        Lane laneToAddCard = getRequestedLaneFromBoard(board, lane);
+        addCardToLane(card, laneToAddCard);
+        saveBoard(board);
     }
 
-    public void moveCard(Card sourceCard, Lane sourceLane, Board sourceBoard, String targetCard, Lane targetLane, Board targetBoard) {
-        Card copyOfSourceCard = Card.builder().description(sourceCard.getDescription()).id(UUID.randomUUID().toString()).name(sourceCard.getName()).build();
+    public void moveCard(Card sourceCard, Lane sourceLane, Board sourceBoard, Card targetCard, Lane targetLane, Board targetBoard) {
+        Card copyOfSourceCard = sourceCard.copyWithNewId();
+        Lane lane = getRequestedLaneFromBoard(targetBoard, targetLane);
 
-        List<Lane> laneList = targetBoard.getLanes()
-                .stream()
-                .filter(laneInBoard -> laneInBoard.getId().equals(targetLane.getId()))
-                .collect(Collectors.toList());
-        if(!targetCard.isEmpty() && !targetCard.isBlank()) {
-            Card targetInList = laneList.get(0).getCards().stream().filter(c -> c.getId().equals(targetCard)).findAny().get();
-            int index = laneList.get(0).getCards().indexOf(targetInList);
-            laneList.get(0).getCards().add(index, copyOfSourceCard);
-        }
-        else{
-            laneList.get(0).getCards().add(copyOfSourceCard);
-        }
-        boardRepository.save(targetBoard);
+        addCardToCorrectPosition(targetCard, copyOfSourceCard, lane);
+        saveBoard(targetBoard);
 
-        Board newSource = boardRepository.findBoardById(sourceBoard.getId());
-        List<Lane> singleEntryList = newSource.getLanes().stream().filter(laneInBoard -> laneInBoard.getId().equals(sourceLane.getId())).collect(Collectors.toList());
-        Lane correctLane = singleEntryList.get(0);
-        correctLane.getCards().removeIf(cardInLane -> cardInLane.getId().equals(sourceCard.getId()));
-        boardRepository.save(newSource);
+        Board updatedSourceBoard = boardRepository.findBoardById(sourceBoard.getId());
+        Lane laneToRemoveSourceCard = getRequestedLaneFromBoard(updatedSourceBoard, sourceLane);
+        removeCardFromLane(sourceCard, laneToRemoveSourceCard);
+        saveBoard(updatedSourceBoard);
     }
 
     public Lane getLaneById(String id) {
@@ -82,5 +62,66 @@ public class LaneService {
         }
         //TODO: HANDLE THIS
         return null;
+    }
+
+    private void addCardToCorrectPosition(Card targetCard, Card sourceCard, Lane lane) {
+        if (targetCard != null) {
+            addCardAfterTargetCard(sourceCard, targetCard, lane);
+        } else {
+            addCardToLane(sourceCard, lane);
+        }
+    }
+
+    private void removeCardFromLane(Card sourceCard, Lane laneToRemoveSourceCard) {
+        laneToRemoveSourceCard.getCards().removeIf(cardInLane -> cardInLane.getId().equals(sourceCard.getId()));
+    }
+
+    private void addCardAfterTargetCard(Card card, Card otherCard, Lane targetLane) {
+        Card requestedCardFormLane = getRequestedCardFormLane(otherCard, targetLane);
+        int targetIndex = targetLane.getCards().indexOf(requestedCardFormLane);
+        targetLane.getCards().add(targetIndex, card);
+    }
+
+    private void saveBoard(Board board) {
+        boardRepository.save(board);
+    }
+
+    private void addCardToLane(Card card, Lane lane) {
+        lane.getCards()
+                .add(card);
+    }
+
+    private Lane getRequestedLaneFromBoard(Board board, Lane lane) {
+        Optional<Lane> requestedLane = board.getLanes()
+                .stream()
+                .filter(laneInBoard -> laneInBoard.getId().equals(lane.getId()))
+                .findFirst();
+        if (requestedLane.isPresent()) {
+            return requestedLane.get();
+        } else {
+            throw new RuntimeException("Requested Lane was not found in Board");
+        }
+    }
+
+    private Card getRequestedCardFormLane(Card targetCard, Lane lane) {
+        Optional<Card> requestedCard = lane.getCards().stream().filter(c -> c.getId().equals(targetCard.getId())).findFirst();
+        if (requestedCard.isPresent()) {
+            return requestedCard.get();
+        } else {
+            throw new RuntimeException("Requested Lane was not found in Board");
+        }
+    }
+
+
+    private void deleteLaneFromBoard(Lane lane, Board board) {
+        board.getLanes().removeIf(laneInBoard -> laneInBoard.getId().equals(lane.getId()));
+    }
+
+    private Lane buildLane(String name) {
+        return Lane.builder()
+                .name(name)
+                .id(UUID.randomUUID().toString())
+                .cards(new ArrayList<>())
+                .build();
     }
 }

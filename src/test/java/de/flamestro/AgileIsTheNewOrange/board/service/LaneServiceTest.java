@@ -22,7 +22,7 @@ class LaneServiceTest extends AbstractIntegrationTest {
         Board board = boardService.createBoard("test_board", "someUserId");
 
         // do
-        Lane lane = laneService.createLane("test_lane", board);
+        Lane lane = laneService.createLaneInBoard("test_lane", board);
 
         // then
         assert lane.getId() != null;
@@ -35,11 +35,11 @@ class LaneServiceTest extends AbstractIntegrationTest {
     void whenLaneRemoved_thenBoardDoesNotContainLane() {
         // when
         Board board = boardService.createBoard("test_board", "someUserId");
-        Lane lane = laneService.createLane("test_lane", board);
+        Lane lane = laneService.createLaneInBoard("test_lane", board);
 
         // do
         assert board.getLanes().get(0).equals(lane);
-        laneService.removeLane(lane, board);
+        laneService.removeLaneFromBoard(lane, board);
 
         // then
         assert lane.getId() != null;

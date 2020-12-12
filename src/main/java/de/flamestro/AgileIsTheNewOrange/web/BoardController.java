@@ -64,14 +64,14 @@ public class BoardController {
         if (name.isBlank()) {
             return ResponseEntity.badRequest().body(LaneResponse.builder().status(Status.INVALID_NAME).build());
         } else {
-            Lane lane = laneService.createLane(name, boardService.getBoardById(boardId));
+            Lane lane = laneService.createLaneInBoard(name, boardService.getBoardById(boardId));
             return ResponseEntity.ok(LaneResponse.builder().lane(lane).status(Status.SUCCESS).build());
         }
     }
 
     @DeleteMapping("/{boardId}/lane/{laneId}")
     public ResponseEntity<LaneResponse> removeLaneFromBoard(@PathVariable String boardId, @PathVariable String laneId) {
-        Lane lane = laneService.removeLane(laneService.getLaneById(laneId), boardService.getBoardById(boardId));
+        Lane lane = laneService.removeLaneFromBoard(laneService.getLaneById(laneId), boardService.getBoardById(boardId));
         return ResponseEntity.ok(LaneResponse.builder().lane(lane).status(Status.SUCCESS).build());
     }
 
