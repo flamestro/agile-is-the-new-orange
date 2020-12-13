@@ -1,15 +1,14 @@
 package de.flamestro.AgileIsTheNewOrange.board.service;
 
+import de.flamestro.AgileIsTheNewOrange.DataProvider;
 import de.flamestro.AgileIsTheNewOrange.board.model.Board;
 import de.flamestro.AgileIsTheNewOrange.board.model.Lane;
 import de.flamestro.AgileIsTheNewOrange.util.AbstractIntegrationTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.DirtiesContext;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class LaneServiceTest extends AbstractIntegrationTest {
     @Autowired
     LaneService laneService;
@@ -19,32 +18,40 @@ class LaneServiceTest extends AbstractIntegrationTest {
     @Test
     void whenCreateLane_thenReturnLaneSuccessfully() {
         // when
-        Board board = boardService.createBoard("test_board", "someUserId");
+        String boardName = DataProvider.generateRandomString();
+        String userId = DataProvider.generateRandomString();
+        String laneName = DataProvider.generateRandomString();
+
+        Board board = boardService.createBoard(boardName, userId);
 
         // do
-        Lane lane = laneService.createLane("test_lane", board);
+        Lane lane = laneService.createLaneInBoard(board, laneName);
 
         // then
-        assert lane.getId() != null;
-        assert lane.getCards() != null;
-        assert !lane.getName().isBlank();
+        assertThat(lane.getId()).isNotBlank();
+        assertThat(lane.getCards()).hasSize(0);
+        assertThat(lane.getName()).isNotBlank();
         assertThat(board.getLanes().get(0)).usingRecursiveComparison().isEqualTo(lane);
     }
 
     @Test
     void whenLaneRemoved_thenBoardDoesNotContainLane() {
         // when
-        Board board = boardService.createBoard("test_board", "someUserId");
-        Lane lane = laneService.createLane("test_lane", board);
+        String boardName = DataProvider.generateRandomString();
+        String userId = DataProvider.generateRandomString();
+        String laneName = DataProvider.generateRandomString();
+
+        Board board = boardService.createBoard(boardName, userId);
+        Lane lane = laneService.createLaneInBoard(board, laneName);
 
         // do
-        assert board.getLanes().get(0).equals(lane);
-        laneService.removeLane(lane, board);
+        assertThat(board.getLanes().get(0)).isEqualTo(lane);
+        laneService.removeLaneFromBoard(board, lane.getId());
 
         // then
-        assert lane.getId() != null;
-        assert lane.getCards() != null;
-        assert !lane.getName().isBlank();
+        assertThat(lane.getId()).isNotBlank();
+        assertThat(lane.getCards()).hasSize(0);
+        assertThat(lane.getName()).isNotBlank();
         assertThat(board.getLanes().size()).isEqualTo(0);
     }
 }
