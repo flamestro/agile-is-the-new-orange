@@ -60,7 +60,7 @@ class BoardControllerTest extends AbstractIntegrationTest {
         Board board = createMockBoard();
 
         // do
-        ResponseEntity<BoardResponse> removeResponseEntity = boardController.removeBoardById(board.getId());
+        ResponseEntity<BoardResponse> removeResponseEntity = boardController.deleteBoard(board.getId());
 
         // then
         BoardResponse result = removeResponseEntity.getBody();
@@ -78,7 +78,7 @@ class BoardControllerTest extends AbstractIntegrationTest {
         Board board = createMockBoard();
 
         // do
-        ResponseEntity<LaneResponse> laneResponseResponseEntity = boardController.addLaneToBoard(board.getId(), "TestLane");
+        ResponseEntity<LaneResponse> laneResponseResponseEntity = boardController.createLane(board.getId(), "TestLane");
 
         // then
         Board resultBoard = mongoTemplate.findById(board.getId(), Board.class);
@@ -99,7 +99,7 @@ class BoardControllerTest extends AbstractIntegrationTest {
         Board board = createMockBoard();
 
         // do
-        ResponseEntity<LaneResponse> laneResponseResponseEntity = boardController.addLaneToBoard(board.getId(), "TestLane");
+        ResponseEntity<LaneResponse> laneResponseResponseEntity = boardController.createLane(board.getId(), "TestLane");
 
         // then
         Board resultBoard = mongoTemplate.findById(board.getId(), Board.class);
@@ -111,7 +111,7 @@ class BoardControllerTest extends AbstractIntegrationTest {
         assertThat(resultBoard.getLanes().get(0)).usingRecursiveComparison().isEqualTo(resultLaneResponse.getLane());
 
         // do
-        boardController.removeLaneFromBoard(board.getId(), resultLaneResponse.getLane().getId());
+        boardController.deleteLane(board.getId(), resultLaneResponse.getLane().getId());
 
         // then
         assertThat(board.getLanes()).isEmpty();
@@ -121,11 +121,11 @@ class BoardControllerTest extends AbstractIntegrationTest {
     void whenCardIsAddedToLane_thenLaneContainsCard(@Autowired MongoTemplate mongoTemplate) {
         // when
         Board board = createMockBoard();
-        LaneResponse lane = boardController.addLaneToBoard(board.getId(), "TestLane").getBody();
+        LaneResponse lane = boardController.createLane(board.getId(), "TestLane").getBody();
         assert lane != null;
 
         // do
-        CardResponse cardResponseResponseEntity = boardController.addCardToLane(board.getId(), lane.getLane().getId(), "TestLane").getBody();
+        CardResponse cardResponseResponseEntity = boardController.createCard(board.getId(), lane.getLane().getId(), "TestLane").getBody();
         assert cardResponseResponseEntity != null;
 
         // then
@@ -141,13 +141,13 @@ class BoardControllerTest extends AbstractIntegrationTest {
     void whenCardIsRemovedFromLane_thenLaneHasNoCards(@Autowired MongoTemplate mongoTemplate) {
         // when
         Board board = createMockBoard();
-        LaneResponse lane = boardController.addLaneToBoard(board.getId(), "TestLane").getBody();
+        LaneResponse lane = boardController.createLane(board.getId(), "TestLane").getBody();
         assert lane != null;
-        CardResponse cardResponse = boardController.addCardToLane(board.getId(), lane.getLane().getId(), "TestLane").getBody();
+        CardResponse cardResponse = boardController.createCard(board.getId(), lane.getLane().getId(), "TestLane").getBody();
         assert cardResponse != null;
 
         //do
-        boardController.removeCardFromLane(board.getId(), lane.getLane().getId(), cardResponse.getCard().getId());
+        boardController.deleteCard(board.getId(), lane.getLane().getId(), cardResponse.getCard().getId());
 
         // then
         List<Card> resultCards = mongoTemplate.findById(board.getId(), Board.class).getLanes().get(0).getCards();

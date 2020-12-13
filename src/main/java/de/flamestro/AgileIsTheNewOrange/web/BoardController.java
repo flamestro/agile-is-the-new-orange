@@ -35,44 +35,44 @@ public class BoardController {
         return ResponseEntity.ok(BoardResponse.builder().boards(List.of(board)).status(Status.SUCCESS).build());
     }
 
+    @DeleteMapping("/{boardId}")
+    public ResponseEntity<BoardResponse> deleteBoard(@PathVariable String boardId) {
+        Board board = boardService.removeBoard(boardService.getBoardById(boardId));
+        return ResponseEntity.ok(BoardResponse.builder().boards(List.of(board)).status(Status.SUCCESS).build());
+    }
+
     @GetMapping
     public ResponseEntity<BoardResponse> getBoardsByUserId(@Param("userId") String userId) {
         List<Board> boardsOfUser = boardService.getBoardsByUserId(userId);
         return ResponseEntity.ok(BoardResponse.builder().boards(boardsOfUser).status(Status.SUCCESS).build());
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<BoardResponse> getBoardById(@PathVariable String id) {
-        Board board = boardService.getBoardById(id);
-        return ResponseEntity.ok(BoardResponse.builder().boards(List.of(board)).status(Status.SUCCESS).build());
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<BoardResponse> removeBoardById(@PathVariable String id) {
-        Board board = boardService.removeBoard(boardService.getBoardById(id));
+    @GetMapping("/{boardId}")
+    public ResponseEntity<BoardResponse> getBoardById(@PathVariable String boardId) {
+        Board board = boardService.getBoardById(boardId);
         return ResponseEntity.ok(BoardResponse.builder().boards(List.of(board)).status(Status.SUCCESS).build());
     }
 
     @PostMapping("/{boardId}/lane")
-    public ResponseEntity<LaneResponse> addLaneToBoard(@PathVariable String boardId, @Param("name") String name) {
+    public ResponseEntity<LaneResponse> createLane(@PathVariable String boardId, @Param("name") String name) {
         Lane lane = laneService.createLaneInBoard(boardService.getBoardById(boardId), name);
         return ResponseEntity.ok(LaneResponse.builder().lane(lane).status(Status.SUCCESS).build());
     }
 
     @DeleteMapping("/{boardId}/lane/{laneId}")
-    public ResponseEntity<LaneResponse> removeLaneFromBoard(@PathVariable String boardId, @PathVariable String laneId) {
+    public ResponseEntity<LaneResponse> deleteLane(@PathVariable String boardId, @PathVariable String laneId) {
         laneService.removeLaneFromBoard(boardService.getBoardById(boardId), laneId);
         return ResponseEntity.ok(LaneResponse.builder().status(Status.SUCCESS).build());
     }
 
     @PostMapping("/{boardId}/lane/{laneId}/card")
-    public ResponseEntity<CardResponse> addCardToLane(@PathVariable String boardId, @PathVariable String laneId, @Param("name") String name) {
+    public ResponseEntity<CardResponse> createCard(@PathVariable String boardId, @PathVariable String laneId, @Param("name") String name) {
         Card card = cardService.createCard(boardService.getBoardById(boardId), laneId, name);
         return ResponseEntity.ok(CardResponse.builder().card(card).status(Status.SUCCESS).build());
     }
 
     @DeleteMapping("/{boardId}/lane/{laneId}/card/{cardId}")
-    public ResponseEntity<CardResponse> removeCardFromLane(@PathVariable String boardId, @PathVariable String laneId, @PathVariable String cardId) {
+    public ResponseEntity<CardResponse> deleteCard(@PathVariable String boardId, @PathVariable String laneId, @PathVariable String cardId) {
         Card card = cardService.removeCard(boardService.getBoardById(boardId), laneId, cardId);
         return ResponseEntity.ok(CardResponse.builder().card(card).status(Status.SUCCESS).build());
     }

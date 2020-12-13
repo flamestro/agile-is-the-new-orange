@@ -18,7 +18,7 @@ public class CardService {
     private final LaneService laneService;
 
     public Card createCard(Board board, String laneId, String name) {
-        Lane lane = laneService.getLaneFromBoard(board, laneId);
+        Lane lane = laneService.getLaneByIdFromBoard(board, laneId);
         Card card = buildCard(name);
         laneService.addCard(board, lane, card);
         log.info("added card(id={}) to lane(id={})", card.getId(), lane.getId());
@@ -26,7 +26,7 @@ public class CardService {
     }
 
     public Card removeCard(Board board, String laneId, String cardId) {
-        laneService.removeCardFromLane(cardId, laneService.getLaneFromBoard(board, laneId));
+        laneService.removeCardByIdFromLane(cardId, laneService.getLaneByIdFromBoard(board, laneId));
         saveBoard(board);
         log.info("removed card(id={}) from lane(id={}) in board(id={})", cardId, laneId, board.getId());
         return null;

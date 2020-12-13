@@ -28,66 +28,61 @@ public class LaneService {
     }
 
     public void removeLaneFromBoard(Board board, String laneId) {
-        deleteLaneFromBoard(laneId, board);
+        deleteLaneByIdFromBoard(laneId, board);
         saveBoard(board);
     }
 
     public void addCard(Board board, Lane lane, Card card) {
-        addCardToLane(card, lane);
+        appendCardToLane(card, lane);
         saveBoard(board);
     }
 
     public void moveCard(MoveCardRequest moveCardRequest) {
         Board sourceBoard = boardService.getBoardById(moveCardRequest.getSourceBoardId());
-        Lane sourceLane = getLaneFromBoard(sourceBoard, moveCardRequest.getSourceLaneId());
-        Card sourceCard = getRequestedCardByIdFormLane(moveCardRequest.getSourceCardId(), sourceLane);
+        Lane sourceLane = getLaneByIdFromBoard(sourceBoard, moveCardRequest.getSourceLaneId());
+        Card sourceCard = getCardByIdFromLane(sourceLane, moveCardRequest.getSourceCardId());
         Board targetBoard = boardService.getBoardById(moveCardRequest.getTargetBoardId());
-        Lane targetLane = getLaneFromBoard(targetBoard, moveCardRequest.getTargetLaneId());
-        Card targetCard = getRequestedCardByIdFormLane(moveCardRequest.getTargetCardId(), targetLane);
+        Lane targetLane = getLaneByIdFromBoard(targetBoard, moveCardRequest.getTargetLaneId());
+        Card targetCard = getCardByIdFromLane(targetLane, moveCardRequest.getTargetCardId());
 
         Card copyOfSourceCard = sourceCard.copyWithNewId();
 
-        addCardToCorrectPosition(targetCard, copyOfSourceCard, targetLane);
+        addCardToCorrectPosition(targetLane, targetCard, copyOfSourceCard);
         saveBoard(targetBoard);
 
-        removeCardFromBoard(sourceCard, sourceLane, sourceBoard);
+        removeCardFromBoard(sourceBoard, sourceLane, sourceCard);
     }
 
-    private void removeCardFromBoard(Card sourceCard, Lane sourceLane, Board sourceBoard) {
+    private void removeCardFromBoard(Board sourceBoard, Lane sourceLane, Card sourceCard) {
         Board updatedSourceBoard = boardService.getBoardById(sourceBoard.getId());
-        Lane laneToRemoveSourceCard = getLaneFromBoard(updatedSourceBoard, sourceLane.getId());
-        removeCardFromLane(sourceCard.getId(), laneToRemoveSourceCard);
+        Lane laneToRemoveSourceCard = getLaneByIdFromBoard(updatedSourceBoard, sourceLane.getId());
+        removeCardByIdFromLane(sourceCard.getId(), laneToRemoveSourceCard);
         saveBoard(updatedSourceBoard);
     }
 
-    private void addCardToCorrectPosition(Card targetCard, Card sourceCard, Lane lane) {
+    private void addCardToCorrectPosition(Lane lane, Card targetCard, Card sourceCard) {
         if (targetCard != null) {
-            addCardAfterTargetCard(sourceCard, targetCard, lane);
+            addCardToLanePositionedAfterTargetCard(sourceCard, targetCard, lane);
         } else {
-            addCardToLane(sourceCard, lane);
+            appendCardToLane(sourceCard, lane);
         }
     }
 
-    public void removeCardFromLane(String sourceCardId, Lane laneToRemoveSourceCard) {
-        laneToRemoveSourceCard.getCards().removeIf(cardInLane -> cardInLane.getId().equals(sourceCardId));
+    public void removeCardByIdFromLane(String cardId, Lane lane) {
+        lane.getCards().removeIf(cardInLane -> cardInLane.getId().equals(cardId));
     }
 
-    private void addCardAfterTargetCard(Card card, Card otherCard, Lane targetLane) {
-        Card requestedCardFormLane = getRequestedCardByIdFormLane(otherCard.getId(), targetLane);
-        int targetIndex = targetLane.getCards().indexOf(requestedCardFormLane);
+    private void addCardToLanePositionedAfterTargetCard(Card card, Card targetCard, Lane targetLane) {
+        int targetIndex = targetLane.getCards().indexOf(targetCard);
         targetLane.getCards().add(targetIndex, card);
     }
 
-    public void saveBoard(Board board) {
-        boardService.saveBoard(board);
-    }
-
-    private void addCardToLane(Card card, Lane lane) {
+    private void appendCardToLane(Card card, Lane lane) {
         lane.getCards()
                 .add(card);
     }
 
-    public Lane getLaneFromBoard(Board board, String laneId) {
+    public Lane getLaneByIdFromBoard(Board board, String laneId) {
         Optional<Lane> requestedLane = board.getLanes()
                 .stream()
                 .filter(laneInBoard -> laneInBoard.getId().equals(laneId))
@@ -99,12 +94,12 @@ public class LaneService {
         }
     }
 
-    private Card getRequestedCardByIdFormLane(String targetCardId, Lane lane) {
-        Optional<Card> requestedCard = lane.getCards().stream().filter(c -> c.getId().equals(targetCardId)).findFirst();
+    private Card getCardByIdFromLane(Lane lane, String cardId) {
+        Optional<Card> requestedCard = lane.getCards().stream().filter(c -> c.getId().equals(cardId)).findFirst();
         return requestedCard.orElse(null);
     }
 
-    private void deleteLaneFromBoard(String laneId, Board board) {
+    private void deleteLaneByIdFromBoard(String laneId, Board board) {
         board.getLanes().removeIf(laneInBoard -> laneInBoard.getId().equals(laneId));
     }
 
@@ -117,5 +112,9 @@ public class LaneService {
                 .id(UUID.randomUUID().toString())
                 .cards(new ArrayList<>())
                 .build();
+    }
+
+    public void saveBoard(Board board) {
+        boardService.saveBoard(board);
     }
 }
