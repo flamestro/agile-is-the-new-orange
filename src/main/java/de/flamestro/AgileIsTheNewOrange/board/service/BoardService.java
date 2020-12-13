@@ -47,7 +47,7 @@ public class BoardService {
     }
 
     public List<Board> getBoardsByUserId(String userId) {
-        return boardRepository.findBoardByAllowedUsersContains(userId);
+        return boardRepository.findBoardByAllowedUsersContains(new String[]{userId});
     }
 
     public Board getBoardById(String id) {

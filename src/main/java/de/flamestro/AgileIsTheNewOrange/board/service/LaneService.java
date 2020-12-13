@@ -21,7 +21,7 @@ public class LaneService {
     private final BoardService boardService;
 
     public Lane createLaneInBoard(Board board, String name) {
-        Lane lane = buildLane(name);
+        Lane lane = buildLaneWithName(name);
         boardService.addLaneToBoard(board, lane);
         log.info("added lane(id={}) to board(id={})", lane.getId(), board.getId());
         return lane;
@@ -37,7 +37,7 @@ public class LaneService {
         saveBoard(board);
     }
 
-    public void moveCard(MoveCardRequest moveCardRequest) {
+    public void moveCardFromSourceToTarget(MoveCardRequest moveCardRequest) {
         Board sourceBoard = boardService.getBoardById(moveCardRequest.getSourceBoardId());
         Lane sourceLane = getLaneByIdFromBoard(sourceBoard, moveCardRequest.getSourceLaneId());
         Card sourceCard = getCardByIdFromLane(sourceLane, moveCardRequest.getSourceCardId());
@@ -47,7 +47,7 @@ public class LaneService {
 
         Card copyOfSourceCard = sourceCard.copyWithNewId();
 
-        addCardToCorrectPosition(targetLane, targetCard, copyOfSourceCard);
+        addSourceCardToCorrectPosition(targetLane, targetCard, copyOfSourceCard);
         saveBoard(targetBoard);
 
         removeCardFromBoard(sourceBoard, sourceLane, sourceCard);
@@ -60,12 +60,17 @@ public class LaneService {
         saveBoard(updatedSourceBoard);
     }
 
-    private void addCardToCorrectPosition(Lane lane, Card targetCard, Card sourceCard) {
+    private void addSourceCardToCorrectPosition(Lane lane, Card targetCard, Card sourceCard) {
         if (targetCard != null) {
             addCardToLanePositionedAfterTargetCard(sourceCard, targetCard, lane);
         } else {
             appendCardToLane(sourceCard, lane);
         }
+    }
+
+    private void appendCardToLane(Card card, Lane lane) {
+        lane.getCards()
+                .add(card);
     }
 
     public void removeCardByIdFromLane(String cardId, Lane lane) {
@@ -75,11 +80,6 @@ public class LaneService {
     private void addCardToLanePositionedAfterTargetCard(Card card, Card targetCard, Lane targetLane) {
         int targetIndex = targetLane.getCards().indexOf(targetCard);
         targetLane.getCards().add(targetIndex, card);
-    }
-
-    private void appendCardToLane(Card card, Lane lane) {
-        lane.getCards()
-                .add(card);
     }
 
     public Lane getLaneByIdFromBoard(Board board, String laneId) {
@@ -103,7 +103,7 @@ public class LaneService {
         board.getLanes().removeIf(laneInBoard -> laneInBoard.getId().equals(laneId));
     }
 
-    private Lane buildLane(String name) {
+    private Lane buildLaneWithName(String name) {
         if (name.isBlank()) {
             throw new InvalidNameException("Name is blank");
         }

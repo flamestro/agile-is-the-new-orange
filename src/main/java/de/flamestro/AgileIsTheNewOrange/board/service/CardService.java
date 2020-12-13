@@ -19,7 +19,7 @@ public class CardService {
 
     public Card createCard(Board board, String laneId, String name) {
         Lane lane = laneService.getLaneByIdFromBoard(board, laneId);
-        Card card = buildCard(name);
+        Card card = buildCardWithName(name);
         laneService.addCard(board, lane, card);
         log.info("added card(id={}) to lane(id={})", card.getId(), lane.getId());
         return card;
@@ -32,7 +32,7 @@ public class CardService {
         return null;
     }
 
-    private Card buildCard(String name) {
+    private Card buildCardWithName(String name) {
         if (name.isBlank()) {
             throw new InvalidNameException("Name is blank");
         }

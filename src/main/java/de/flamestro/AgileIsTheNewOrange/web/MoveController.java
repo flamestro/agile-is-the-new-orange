@@ -20,7 +20,7 @@ public class MoveController {
 
     @PutMapping("/moveCard")
     public ResponseEntity<LaneResponse> moveCard(@RequestBody MoveCardRequest moveCardRequest) {
-        laneService.moveCard(moveCardRequest);
+        laneService.moveCardFromSourceToTarget(moveCardRequest);
         return ResponseEntity.ok(LaneResponse.builder().status(Status.SUCCESS).build());
     }
 }
