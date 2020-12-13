@@ -1,5 +1,6 @@
 package de.flamestro.AgileIsTheNewOrange.board.service;
 
+import de.flamestro.AgileIsTheNewOrange.DataProvider;
 import de.flamestro.AgileIsTheNewOrange.board.model.Board;
 import de.flamestro.AgileIsTheNewOrange.util.AbstractIntegrationTest;
 import org.junit.jupiter.api.Test;
@@ -15,14 +16,17 @@ class BoardServiceTest extends AbstractIntegrationTest {
     @Test
     void whenCreateBoard_thenBoardIsInMongoDB(@Autowired MongoTemplate mongoTemplate) {
         // do
-        Board board = boardService.createBoard("test_board", "someUserId");
+        String boardName = DataProvider.generateRandomString();
+        String userId = DataProvider.generateRandomString();
+
+        Board board = boardService.createBoard(boardName, userId);
 
         // then
         Board result = mongoTemplate.findById(board.getId(), Board.class);
 
-        assert board.getId() != null;
-        assert board.getLanes() != null;
-        assert !board.getName().isBlank();
+        assertThat(board.getId()).isNotBlank();
+        assertThat(board.getLanes()).hasSize(0);
+        assertThat(board.getName()).isNotBlank();
         assertThat(board).usingRecursiveComparison().isEqualTo(result);
     }
 }
