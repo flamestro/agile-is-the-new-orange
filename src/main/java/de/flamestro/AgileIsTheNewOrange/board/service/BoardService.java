@@ -19,17 +19,25 @@ public class BoardService {
     private final BoardRepository boardRepository;
 
     public Board createBoard(String name, String userId) {
-        Board board = buildBoard(name, userId);
+        Board board = buildBoardWithValidatedName(name, userId);
         boardRepository.save(board);
         log.info("created board with id: {}", board.getId());
         return board;
     }
 
-    private Board buildBoard(String name, String userId) {
+    private Board buildBoardWithValidatedName(String name, String userId) {
+        validateName(name);
+        return buildBoardWithName(name, userId);
+    }
+
+    private Board buildBoardWithName(String name, String userId) {
+        return Board.builder().name(name).allowedUsers(new String[]{userId}).lanes(new ArrayList<>()).build();
+    }
+
+    private void validateName(String name) {
         if (name.isBlank()) {
             throw new InvalidNameException("Name is blank");
         }
-        return Board.builder().name(name).allowedUsers(new String[]{userId}).lanes(new ArrayList<>()).build();
     }
 
     public void saveBoard(Board board) {

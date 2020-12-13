@@ -26,37 +26,6 @@ public class LaneService {
         return lane;
     }
 
-    public void removeLaneFromBoard(Board board, String laneId) {
-        deleteLaneByIdFromBoard(laneId, board);
-        saveBoard(board);
-    }
-
-    public void addCard(Board board, Lane lane, Card card) {
-        appendCardToLane(card, lane);
-        saveBoard(board);
-    }
-
-    public void appendCardToLane(Card card, Lane lane) {
-        lane.getCards()
-                .add(card);
-    }
-
-    public Lane getLaneByIdFromBoard(Board board, String laneId) {
-        Optional<Lane> requestedLane = board.getLanes()
-                .stream()
-                .filter(laneInBoard -> laneInBoard.getId().equals(laneId))
-                .findFirst();
-        if (requestedLane.isPresent()) {
-            return requestedLane.get();
-        } else {
-            throw new RuntimeException("Requested Lane was not found in Board");
-        }
-    }
-
-    private void deleteLaneByIdFromBoard(String laneId, Board board) {
-        board.getLanes().removeIf(laneInBoard -> laneInBoard.getId().equals(laneId));
-    }
-
     private Lane buildLaneWithValidatedName(String name) {
         validateName(name);
         return buildLaneWithName(name);
@@ -76,7 +45,38 @@ public class LaneService {
                 .build();
     }
 
+    public void removeLaneFromBoard(Board board, String laneId) {
+        deleteLaneByIdFromBoard(laneId, board);
+        saveBoard(board);
+    }
+
+    private void deleteLaneByIdFromBoard(String laneId, Board board) {
+        board.getLanes().removeIf(laneInBoard -> laneInBoard.getId().equals(laneId));
+    }
+
+    public void addCard(Board board, Lane lane, Card card) {
+        appendCardToLane(card, lane);
+        saveBoard(board);
+    }
+
+    public void appendCardToLane(Card card, Lane lane) {
+        lane.getCards()
+                .add(card);
+    }
+
     public void saveBoard(Board board) {
         boardService.saveBoard(board);
+    }
+
+    public Lane getLaneByIdFromBoard(Board board, String laneId) {
+        Optional<Lane> requestedLane = board.getLanes()
+                .stream()
+                .filter(laneInBoard -> laneInBoard.getId().equals(laneId))
+                .findFirst();
+        if (requestedLane.isPresent()) {
+            return requestedLane.get();
+        } else {
+            throw new RuntimeException("Requested Lane was not found in Board");
+        }
     }
 }

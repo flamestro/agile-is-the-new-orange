@@ -20,10 +20,25 @@ public class CardService {
 
     public Card createCard(Board board, String laneId, String name) {
         Lane lane = laneService.getLaneByIdFromBoard(board, laneId);
-        Card card = buildCardWithName(name);
+        Card card = buildCardWithValidatedName(name);
         laneService.addCard(board, lane, card);
         log.info("added card(id={}) to lane(id={})", card.getId(), lane.getId());
         return card;
+    }
+
+    private Card buildCardWithValidatedName(String name) {
+        validateName(name);
+        return buildCardWithName(name);
+    }
+
+    private Card buildCardWithName(String name) {
+        return Card.builder().name(name).id(UUID.randomUUID().toString()).build();
+    }
+
+    private void validateName(String name) {
+        if (name.isBlank()) {
+            throw new InvalidNameException("Name is blank");
+        }
     }
 
     public Card removeCard(Board board, String laneId, String cardId) {
@@ -31,13 +46,6 @@ public class CardService {
         saveBoard(board);
         log.info("removed card(id={}) from lane(id={}) in board(id={})", cardId, laneId, board.getId());
         return null;
-    }
-
-    private Card buildCardWithName(String name) {
-        if (name.isBlank()) {
-            throw new InvalidNameException("Name is blank");
-        }
-        return Card.builder().name(name).id(UUID.randomUUID().toString()).build();
     }
 
     public Card getCardByIdFromLane(Lane lane, String cardId) {
