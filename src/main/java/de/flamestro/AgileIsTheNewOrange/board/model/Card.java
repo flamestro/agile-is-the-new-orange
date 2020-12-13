@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
-import java.util.UUID;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,12 +19,4 @@ public class Card implements Serializable {
     private String name;
 
     private String description;
-
-    public Card copyWithNewId() {
-        return Card.builder()
-                .description(this.getDescription())
-                .id(UUID.randomUUID().toString())
-                .name(this.getName())
-                .build();
-    }
 }

@@ -4,7 +4,6 @@ import de.flamestro.AgileIsTheNewOrange.board.model.Board;
 import de.flamestro.AgileIsTheNewOrange.board.model.Card;
 import de.flamestro.AgileIsTheNewOrange.board.model.Lane;
 import de.flamestro.AgileIsTheNewOrange.exceptions.InvalidNameException;
-import de.flamestro.AgileIsTheNewOrange.web.model.MoveCardRequest;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,7 +20,7 @@ public class LaneService {
     private final BoardService boardService;
 
     public Lane createLaneInBoard(Board board, String name) {
-        Lane lane = buildLaneWithName(name);
+        Lane lane = buildLaneWithValidatedName(name);
         boardService.addLaneToBoard(board, lane);
         log.info("added lane(id={}) to board(id={})", lane.getId(), board.getId());
         return lane;
@@ -37,49 +36,9 @@ public class LaneService {
         saveBoard(board);
     }
 
-    public void moveCardFromSourceToTarget(MoveCardRequest moveCardRequest) {
-        Board sourceBoard = boardService.getBoardById(moveCardRequest.getSourceBoardId());
-        Lane sourceLane = getLaneByIdFromBoard(sourceBoard, moveCardRequest.getSourceLaneId());
-        Card sourceCard = getCardByIdFromLane(sourceLane, moveCardRequest.getSourceCardId());
-        Board targetBoard = boardService.getBoardById(moveCardRequest.getTargetBoardId());
-        Lane targetLane = getLaneByIdFromBoard(targetBoard, moveCardRequest.getTargetLaneId());
-        Card targetCard = getCardByIdFromLane(targetLane, moveCardRequest.getTargetCardId());
-
-        Card copyOfSourceCard = sourceCard.copyWithNewId();
-
-        addSourceCardToCorrectPosition(targetLane, targetCard, copyOfSourceCard);
-        saveBoard(targetBoard);
-
-        removeCardFromBoard(sourceBoard, sourceLane, sourceCard);
-    }
-
-    private void removeCardFromBoard(Board sourceBoard, Lane sourceLane, Card sourceCard) {
-        Board updatedSourceBoard = boardService.getBoardById(sourceBoard.getId());
-        Lane laneToRemoveSourceCard = getLaneByIdFromBoard(updatedSourceBoard, sourceLane.getId());
-        removeCardByIdFromLane(sourceCard.getId(), laneToRemoveSourceCard);
-        saveBoard(updatedSourceBoard);
-    }
-
-    private void addSourceCardToCorrectPosition(Lane lane, Card targetCard, Card sourceCard) {
-        if (targetCard != null) {
-            addCardToLanePositionedAfterTargetCard(sourceCard, targetCard, lane);
-        } else {
-            appendCardToLane(sourceCard, lane);
-        }
-    }
-
-    private void appendCardToLane(Card card, Lane lane) {
+    public void appendCardToLane(Card card, Lane lane) {
         lane.getCards()
                 .add(card);
-    }
-
-    public void removeCardByIdFromLane(String cardId, Lane lane) {
-        lane.getCards().removeIf(cardInLane -> cardInLane.getId().equals(cardId));
-    }
-
-    private void addCardToLanePositionedAfterTargetCard(Card card, Card targetCard, Lane targetLane) {
-        int targetIndex = targetLane.getCards().indexOf(targetCard);
-        targetLane.getCards().add(targetIndex, card);
     }
 
     public Lane getLaneByIdFromBoard(Board board, String laneId) {
@@ -94,19 +53,22 @@ public class LaneService {
         }
     }
 
-    private Card getCardByIdFromLane(Lane lane, String cardId) {
-        Optional<Card> requestedCard = lane.getCards().stream().filter(c -> c.getId().equals(cardId)).findFirst();
-        return requestedCard.orElse(null);
-    }
-
     private void deleteLaneByIdFromBoard(String laneId, Board board) {
         board.getLanes().removeIf(laneInBoard -> laneInBoard.getId().equals(laneId));
     }
 
-    private Lane buildLaneWithName(String name) {
+    private Lane buildLaneWithValidatedName(String name) {
+        validateName(name);
+        return buildLaneWithName(name);
+    }
+
+    private void validateName(String name) {
         if (name.isBlank()) {
             throw new InvalidNameException("Name is blank");
         }
+    }
+
+    private Lane buildLaneWithName(String name) {
         return Lane.builder()
                 .name(name)
                 .id(UUID.randomUUID().toString())

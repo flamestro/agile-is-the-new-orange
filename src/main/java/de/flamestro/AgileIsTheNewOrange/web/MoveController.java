@@ -1,6 +1,6 @@
 package de.flamestro.AgileIsTheNewOrange.web;
 
-import de.flamestro.AgileIsTheNewOrange.board.service.LaneService;
+import de.flamestro.AgileIsTheNewOrange.board.service.MoveService;
 import de.flamestro.AgileIsTheNewOrange.web.model.LaneResponse;
 import de.flamestro.AgileIsTheNewOrange.web.model.MoveCardRequest;
 import de.flamestro.AgileIsTheNewOrange.web.model.Status;
@@ -16,11 +16,11 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 public class MoveController {
 
-    private final LaneService laneService;
+    private final MoveService moveService;
 
     @PutMapping("/moveCard")
     public ResponseEntity<LaneResponse> moveCard(@RequestBody MoveCardRequest moveCardRequest) {
-        laneService.moveCardFromSourceToTarget(moveCardRequest);
+        moveService.moveCardFromSourceToTarget(moveCardRequest);
         return ResponseEntity.ok(LaneResponse.builder().status(Status.SUCCESS).build());
     }
 }
