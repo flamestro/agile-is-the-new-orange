@@ -2,14 +2,12 @@ package de.flamestro.AgileIsTheNewOrange.board.service;
 
 import de.flamestro.AgileIsTheNewOrange.DataProvider;
 import de.flamestro.AgileIsTheNewOrange.board.model.Board;
-import de.flamestro.AgileIsTheNewOrange.exceptions.InvalidNameException;
 import de.flamestro.AgileIsTheNewOrange.util.AbstractIntegrationTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.catchThrowable;
 
 class BoardServiceTest extends AbstractIntegrationTest {
     @Autowired
@@ -30,17 +28,5 @@ class BoardServiceTest extends AbstractIntegrationTest {
         assertThat(board.getLanes()).hasSize(0);
         assertThat(board.getName()).isNotBlank();
         assertThat(board).usingRecursiveComparison().isEqualTo(result);
-    }
-
-    @Test
-    void whenCreateBoardWithEmptyName_thenThrowInvalidNameException() {
-        // do
-        String boardName = "";
-        String userId = DataProvider.generateRandomString();
-
-        Throwable error = catchThrowable(() -> boardService.createBoard(boardName, userId));
-
-        // then
-        assertThat(error).isInstanceOf(InvalidNameException.class);
     }
 }
