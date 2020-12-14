@@ -3,7 +3,6 @@ package de.flamestro.AgileIsTheNewOrange.board.service;
 import de.flamestro.AgileIsTheNewOrange.board.model.Board;
 import de.flamestro.AgileIsTheNewOrange.board.model.Card;
 import de.flamestro.AgileIsTheNewOrange.board.model.Lane;
-import de.flamestro.AgileIsTheNewOrange.exceptions.InvalidNameException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,21 +19,10 @@ public class LaneService {
     private final BoardService boardService;
 
     public Lane createLaneInBoard(Board board, String name) {
-        Lane lane = buildLaneWithValidatedName(name);
+        Lane lane = buildLaneWithName(name);
         boardService.addLaneToBoard(board, lane);
         log.info("added lane(id={}) to board(id={})", lane.getId(), board.getId());
         return lane;
-    }
-
-    private Lane buildLaneWithValidatedName(String name) {
-        validateName(name);
-        return buildLaneWithName(name);
-    }
-
-    private void validateName(String name) {
-        if (name.isBlank()) {
-            throw new InvalidNameException("Name is blank");
-        }
     }
 
     private Lane buildLaneWithName(String name) {

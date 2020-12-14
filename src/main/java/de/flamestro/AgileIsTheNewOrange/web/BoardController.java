@@ -60,7 +60,7 @@ public class BoardController {
 
     @PostMapping("/{boardId}/lane")
     public ResponseEntity<LaneResponse> createLane(@PathVariable String boardId,
-                                                   @Param("name") String name) {
+                                                   @Valid @NotBlank @Param("name") String name) {
         Lane lane = laneService.createLaneInBoard(boardService.getBoardById(boardId), name);
         return ResponseEntity.ok(LaneResponse.builder().lane(lane).status(Status.SUCCESS).build());
     }
@@ -75,7 +75,7 @@ public class BoardController {
     @PostMapping("/{boardId}/lane/{laneId}/card")
     public ResponseEntity<CardResponse> createCard(@PathVariable String boardId,
                                                    @PathVariable String laneId,
-                                                   @Param("name") String name) {
+                                                   @Valid @NotBlank @Param("name") String name) {
         Card card = cardService.createCard(boardService.getBoardById(boardId), laneId, name);
         return ResponseEntity.ok(CardResponse.builder().card(card).status(Status.SUCCESS).build());
     }
