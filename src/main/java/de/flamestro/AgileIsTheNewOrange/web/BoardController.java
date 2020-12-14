@@ -14,8 +14,11 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 @RestController
@@ -23,6 +26,7 @@ import java.util.List;
 @RequestMapping("/board")
 @AllArgsConstructor
 @Slf4j
+@Validated
 public class BoardController {
 
     private final BoardService boardService;
@@ -30,7 +34,7 @@ public class BoardController {
     private final CardService cardService;
 
     @PostMapping
-    public ResponseEntity<BoardResponse> createBoard(@Param("name") String name,
+    public ResponseEntity<BoardResponse> createBoard(@Valid @NotBlank @Param("name") String name,
                                                      @Param("userId") String userId) {
         Board board = boardService.createBoard(name, userId);
         return ResponseEntity.ok(BoardResponse.builder().boards(List.of(board)).status(Status.SUCCESS).build());
