@@ -3,7 +3,7 @@
 # Introduction
 This application is an API that can be used for a KanBan/Scrum board UI like [this](https://github.com/flamestro/agile-is-the-new-orange-ui) one.
 
-Start application using:
+Start the application using:
 
 `docker-compose -f docker-compose.yml up --build`
 
