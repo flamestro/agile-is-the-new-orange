@@ -17,3 +17,6 @@ Swagger: `http://localhost:8080/swagger-ui.html`
 
 Mongo: `mongodb://localhost:27017`
 
+# Only Starting the MongoDB Container
+
+ `docker run -d -p 27017-27019:27017-27019 --name mongodb mongo:4.0.4`
