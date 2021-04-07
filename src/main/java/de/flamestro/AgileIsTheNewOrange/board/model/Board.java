@@ -1,7 +1,8 @@
 package de.flamestro.AgileIsTheNewOrange.board.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.*;
+import lombok.Builder;
+import lombok.Data;
 import org.springframework.data.annotation.Id;
 
 import javax.validation.constraints.NotBlank;
@@ -9,11 +10,8 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.List;
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
+@Data
 @Builder
-@Setter
 public class Board implements Serializable {
     @Id
     public String id;

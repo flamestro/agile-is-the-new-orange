@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -161,18 +162,22 @@ class BoardControllerTest extends AbstractIntegrationTest {
 
         LaneResponse lane = boardController.createLane(board.getId(), "TestLane").getBody();
         assertThat(lane).isNotNull();
-        CardResponse cardResponse = boardController.createCard(board.getId(), lane.getLane().getId(), "TestLane").getBody();
+        CardResponse cardResponse = boardController.createCard(board.getId(), lane.getLane().getId(), "TestLane")
+                .getBody();
         assertThat(cardResponse).isNotNull();
 
         //do
         boardController.deleteCard(board.getId(), lane.getLane().getId(), cardResponse.getCard().getId());
 
         // then
-        List<Card> resultCards = mongoTemplate.findById(board.getId(), Board.class).getLanes().get(0).getCards();
+        List<Card> resultCards = Objects.requireNonNull(mongoTemplate.findById(board.getId(), Board.class))
+                .getLanes()
+                .get(0)
+                .getCards();
         assertThat(resultCards).isEmpty();
     }
 
-    private Board createMockBoard(String boardName, String userId){
+    private Board createMockBoard(String boardName, String userId) {
         // when
         ResponseEntity<BoardResponse> responseEntity = boardController.createBoard(boardName, userId);
         BoardResponse createResponse = responseEntity.getBody();

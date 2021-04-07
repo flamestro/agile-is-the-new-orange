@@ -10,9 +10,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
-@Service
 @AllArgsConstructor
 @Slf4j
+@Service
 public class MoveService {
     private final BoardService boardService;
     private final LaneService laneService;

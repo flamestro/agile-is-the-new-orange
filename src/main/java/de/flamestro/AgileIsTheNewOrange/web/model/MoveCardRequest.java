@@ -1,13 +1,10 @@
 package de.flamestro.AgileIsTheNewOrange.web.model;
 
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
 
-@Builder
-@Setter
 @Getter
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
+@Builder
 public class MoveCardRequest {
     private String targetCardId;
     private String targetLaneId;

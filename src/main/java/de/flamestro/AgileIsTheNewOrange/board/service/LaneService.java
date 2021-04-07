@@ -11,9 +11,9 @@ import java.util.ArrayList;
 import java.util.Optional;
 import java.util.UUID;
 
-@Service
 @AllArgsConstructor
 @Slf4j
+@Service
 public class LaneService {
 
     private final BoardService boardService;
@@ -41,7 +41,7 @@ public class LaneService {
     private void deleteLaneByIdFromBoard(String laneId, Board board) {
         board.getLanes().removeIf(laneInBoard -> laneInBoard.getId().equals(laneId));
     }
-    
+
     public void saveBoard(Board board) {
         boardService.saveBoard(board);
     }
