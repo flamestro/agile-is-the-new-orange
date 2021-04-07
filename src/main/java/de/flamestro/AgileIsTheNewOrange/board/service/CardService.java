@@ -36,15 +36,16 @@ public class CardService {
         return null;
     }
 
-    public Card getCardByIdFromLane(Lane lane, String cardId) {
-        Optional<Card> requestedCard = lane.getCards().stream().filter(c -> c.getId().equals(cardId)).findFirst();
-        return requestedCard.orElse(null);
-    }
     public void removeCardByIdFromLane(String cardId, Lane lane) {
         lane.getCards().removeIf(cardInLane -> cardInLane.getId().equals(cardId));
     }
 
     private void saveBoard(Board board) {
         laneService.saveBoard(board);
+    }
+
+    public Card getCardByIdFromLane(Lane lane, String cardId) {
+        Optional<Card> requestedCard = lane.getCards().stream().filter(c -> c.getId().equals(cardId)).findFirst();
+        return requestedCard.orElse(null);
     }
 }

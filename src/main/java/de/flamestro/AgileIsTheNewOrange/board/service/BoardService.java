@@ -19,7 +19,7 @@ public class BoardService {
 
     public Board createBoard(String name, String userId) {
         Board board = buildBoardWithName(name, userId);
-        boardRepository.save(board);
+        saveBoard(board);
         log.info("created board with id: {}", board.getId());
         return board;
     }

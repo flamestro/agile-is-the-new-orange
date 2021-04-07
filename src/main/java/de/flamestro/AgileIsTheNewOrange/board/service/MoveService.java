@@ -34,11 +34,12 @@ public class MoveService {
         removeCardFromBoard(sourceBoard, sourceLane, sourceCard);
     }
 
-    private void removeCardFromBoard(Board sourceBoard, Lane sourceLane, Card sourceCard) {
-        Board updatedSourceBoard = boardService.getBoardById(sourceBoard.getId());
-        Lane laneToRemoveSourceCard = laneService.getLaneByIdFromBoard(updatedSourceBoard, sourceLane.getId());
-        cardService.removeCardByIdFromLane(sourceCard.getId(), laneToRemoveSourceCard);
-        boardService.saveBoard(updatedSourceBoard);
+    public Card copyCardWithNewId(Card card) {
+        return Card.builder()
+                .description(card.getDescription())
+                .id(UUID.randomUUID().toString())
+                .name(card.getName())
+                .build();
     }
 
     private void addSourceCardToCorrectPosition(Lane lane, Card targetCard, Card sourceCard) {
@@ -54,11 +55,10 @@ public class MoveService {
         targetLane.getCards().add(targetIndex, card);
     }
 
-    public Card copyCardWithNewId(Card card) {
-        return Card.builder()
-                .description(card.getDescription())
-                .id(UUID.randomUUID().toString())
-                .name(card.getName())
-                .build();
+    private void removeCardFromBoard(Board sourceBoard, Lane sourceLane, Card sourceCard) {
+        Board updatedSourceBoard = boardService.getBoardById(sourceBoard.getId());
+        Lane laneToRemoveSourceCard = laneService.getLaneByIdFromBoard(updatedSourceBoard, sourceLane.getId());
+        cardService.removeCardByIdFromLane(sourceCard.getId(), laneToRemoveSourceCard);
+        boardService.saveBoard(updatedSourceBoard);
     }
 }

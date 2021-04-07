@@ -41,6 +41,10 @@ public class LaneService {
     private void deleteLaneByIdFromBoard(String laneId, Board board) {
         board.getLanes().removeIf(laneInBoard -> laneInBoard.getId().equals(laneId));
     }
+    
+    public void saveBoard(Board board) {
+        boardService.saveBoard(board);
+    }
 
     public void addCard(Board board, Lane lane, Card card) {
         appendCardToLane(card, lane);
@@ -50,10 +54,6 @@ public class LaneService {
     public void appendCardToLane(Card card, Lane lane) {
         lane.getCards()
                 .add(card);
-    }
-
-    public void saveBoard(Board board) {
-        boardService.saveBoard(board);
     }
 
     public Lane getLaneByIdFromBoard(Board board, String laneId) {
