@@ -39,7 +39,7 @@ public class BoardService {
 
     public void addLaneToBoard(Board board, Lane lane) {
         board.getLanes().add(lane);
-        boardRepository.save(board);
+        saveBoard(board);
     }
 
     public List<Board> getBoardsByUserId(String userId) {
