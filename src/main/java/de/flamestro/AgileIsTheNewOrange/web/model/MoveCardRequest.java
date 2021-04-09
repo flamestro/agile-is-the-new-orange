@@ -6,10 +6,10 @@ import lombok.Getter;
 @Getter
 @Builder
 public class MoveCardRequest {
-    private String targetCardId;
-    private String targetLaneId;
-    private String targetBoardId;
-    private String sourceCardId;
-    private String sourceLaneId;
-    private String sourceBoardId;
+    private final String targetCardId;
+    private final String targetLaneId;
+    private final String targetBoardId;
+    private final String sourceCardId;
+    private final String sourceLaneId;
+    private final String sourceBoardId;
 }
