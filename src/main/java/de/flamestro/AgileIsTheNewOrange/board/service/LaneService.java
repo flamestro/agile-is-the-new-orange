@@ -3,29 +3,15 @@ package de.flamestro.AgileIsTheNewOrange.board.service;
 import de.flamestro.AgileIsTheNewOrange.board.model.Board;
 import de.flamestro.AgileIsTheNewOrange.board.model.Card;
 import de.flamestro.AgileIsTheNewOrange.board.model.Lane;
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-@AllArgsConstructor
-@Slf4j
-@Service
 public class LaneService {
 
-    private final BoardService boardService;
-
-    public Lane createLaneInBoard(Board board, String name) {
-        Lane lane = buildLaneWithName(name);
-        boardService.addLaneToBoard(board, lane);
-        log.info("added lane(id={}) to board(id={})", lane.getId(), board.getId());
-        return lane;
-    }
-
-    private Lane buildLaneWithName(String name) {
+    public static Lane createLane(String name) {
         return Lane.builder()
                 .name(name)
                 .id(UUID.randomUUID().toString())
@@ -33,30 +19,19 @@ public class LaneService {
                 .build();
     }
 
-    public void removeLaneFromBoard(Board board, String laneId) {
-        deleteLaneByIdFromBoard(laneId, board);
-        saveBoard(board);
-    }
-
-    private void deleteLaneByIdFromBoard(String laneId, Board board) {
+    public static void removeLaneFromBoard(String laneId, Board board) {
         board.getLanes().removeIf(laneInBoard -> laneInBoard.getId().equals(laneId));
     }
 
-    public void saveBoard(Board board) {
-        boardService.saveBoard(board);
+    public static void appendCardToLane(Card card, Lane lane) {
+        if(lane.getCards() == null){
+            List<Card> cards = new ArrayList<>();
+            lane.setCards(cards);
+        }
+        lane.getCards().add(card);
     }
 
-    public void addCard(Board board, Lane lane, Card card) {
-        appendCardToLane(card, lane);
-        saveBoard(board);
-    }
-
-    public void appendCardToLane(Card card, Lane lane) {
-        lane.getCards()
-                .add(card);
-    }
-
-    public Lane getLaneByIdFromBoard(Board board, String laneId) {
+    public static Lane getLaneFromBoard(String laneId, Board board) {
         Optional<Lane> requestedLane = board.getLanes()
                 .stream()
                 .filter(laneInBoard -> laneInBoard.getId().equals(laneId))

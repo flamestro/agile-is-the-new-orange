@@ -26,7 +26,6 @@ class BoardControllerTestIT extends AbstractIntegrationTest {
 
     @Test
     void whenCreateBoardWithEmptyName_thenReturnHttpStatusBadRequest() throws Exception {
-        // when
         mockMvc.perform(MockMvcRequestBuilders.post("/board")
                 .param("name", "")
                 .param("userId", DataProvider.generateRandomString())
@@ -37,7 +36,6 @@ class BoardControllerTestIT extends AbstractIntegrationTest {
 
     @Test
     void whenCreateBoard_thenReturnHttpStatusOk() throws Exception {
-        // when
         mockMvc.perform(MockMvcRequestBuilders.post("/board")
                 .param("name", DataProvider.generateRandomString())
                 .param("userId", DataProvider.generateRandomString())

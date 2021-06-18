@@ -15,16 +15,14 @@ import java.util.UUID;
 @Service
 public class MoveService {
     private final BoardService boardService;
-    private final LaneService laneService;
-    private final CardService cardService;
 
     public void moveCardFromSourceToTarget(MoveCardRequest moveCardRequest) {
         Board sourceBoard = boardService.getBoardById(moveCardRequest.getSourceBoardId());
-        Lane sourceLane = laneService.getLaneByIdFromBoard(sourceBoard, moveCardRequest.getSourceLaneId());
-        Card sourceCard = cardService.getCardByIdFromLane(sourceLane, moveCardRequest.getSourceCardId());
+        Lane sourceLane = LaneService.getLaneFromBoard(moveCardRequest.getSourceLaneId(), sourceBoard);
+        Card sourceCard = CardService.getCardByIdFromLane(sourceLane, moveCardRequest.getSourceCardId());
         Board targetBoard = boardService.getBoardById(moveCardRequest.getTargetBoardId());
-        Lane targetLane = laneService.getLaneByIdFromBoard(targetBoard, moveCardRequest.getTargetLaneId());
-        Card targetCard = cardService.getCardByIdFromLane(targetLane, moveCardRequest.getTargetCardId());
+        Lane targetLane = LaneService.getLaneFromBoard(moveCardRequest.getTargetLaneId(), targetBoard);
+        Card targetCard = CardService.getCardByIdFromLane(targetLane, moveCardRequest.getTargetCardId());
 
         Card copyOfSourceCard = copyCardWithNewId(sourceCard);
 
@@ -46,7 +44,7 @@ public class MoveService {
         if (targetCard != null) {
             addCardToLanePositionedAfterTargetCard(sourceCard, targetCard, lane);
         } else {
-            laneService.appendCardToLane(sourceCard, lane);
+            LaneService.appendCardToLane(sourceCard, lane);
         }
     }
 
@@ -57,8 +55,8 @@ public class MoveService {
 
     private void removeCardFromBoard(Board sourceBoard, Lane sourceLane, Card sourceCard) {
         Board updatedSourceBoard = boardService.getBoardById(sourceBoard.getId());
-        Lane laneToRemoveSourceCard = laneService.getLaneByIdFromBoard(updatedSourceBoard, sourceLane.getId());
-        cardService.removeCardByIdFromLane(sourceCard.getId(), laneToRemoveSourceCard);
+        Lane laneToRemoveSourceCard = LaneService.getLaneFromBoard(sourceLane.getId(), updatedSourceBoard);
+        CardService.removeCardByIdFromLane(sourceCard.getId(), laneToRemoveSourceCard);
         boardService.saveBoard(updatedSourceBoard);
     }
 }

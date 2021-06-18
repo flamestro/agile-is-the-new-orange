@@ -1,194 +1,104 @@
 package de.flamestro.AgileIsTheNewOrange.web;
 
-import de.flamestro.AgileIsTheNewOrange.DataProvider;
 import de.flamestro.AgileIsTheNewOrange.board.model.Board;
-import de.flamestro.AgileIsTheNewOrange.board.model.Card;
-import de.flamestro.AgileIsTheNewOrange.util.AbstractIntegrationTest;
+import de.flamestro.AgileIsTheNewOrange.board.model.Lane;
+import de.flamestro.AgileIsTheNewOrange.board.service.BoardService;
 import de.flamestro.AgileIsTheNewOrange.web.model.BoardResponse;
-import de.flamestro.AgileIsTheNewOrange.web.model.CardResponse;
 import de.flamestro.AgileIsTheNewOrange.web.model.LaneResponse;
-import de.flamestro.AgileIsTheNewOrange.web.model.Status;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.http.ResponseEntity;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-class BoardControllerTest extends AbstractIntegrationTest {
+@ExtendWith(MockitoExtension.class)
+class BoardControllerTest {
 
-    @Autowired
+    private static final String BOARD_NAME = "boardName";
+    private static final String LANE_NAME = "laneName";
+    private static final String USER_ID = "userId";
+    private static final String BOARD_ID = "boardId";
+    private static final String LANE_ID = "laneId";
+    @Mock
+    BoardService boardService;
+
+    @InjectMocks
     BoardController boardController;
 
     @Test
-    void whenGetBoardIsCalled_thenReturnValidResponse() {
-        // when
-        String boardName = DataProvider.generateRandomString();
-        String userId = DataProvider.generateRandomString();
-        BoardResponse expectedBoard = boardController.createBoard(boardName, userId).getBody();
-        assertThat(expectedBoard).isNotNull();
+    void whenCreateBoard_thenBoardIsCreated() {
+        Board board = Board.builder().name(BOARD_NAME).id(BOARD_ID).build();
+        when(boardService.createBoard(BOARD_NAME, USER_ID)).thenReturn(board);
 
-        // do
-        ResponseEntity<BoardResponse> result = boardController.getBoardById(expectedBoard.getBoards().get(0).getId());
+        BoardResponse response = boardController.createBoard(BOARD_NAME, USER_ID).getBody();
 
-        // then
-        BoardResponse responseBody = result.getBody();
-        assertThat(responseBody).isNotNull();
-        assertThat(responseBody.getBoards().get(0)).usingRecursiveComparison().isEqualTo(expectedBoard.getBoards().get(0));
-        assertThat(responseBody.getStatus()).isEqualTo(Status.SUCCESS);
+        assertThat(Objects.requireNonNull(response).getBoards()).contains(board);
     }
 
     @Test
-    void whenAddBoardIsCalled_thenReturnValidResponse() {
-        // do
-        String boardName = DataProvider.generateRandomString();
-        String userId = DataProvider.generateRandomString();
-        ResponseEntity<BoardResponse> responseEntity = boardController.createBoard(boardName, userId);
+    void whenDeleteBoard_thenBoardIsDeleted() {
+        Board board = Board.builder().name(BOARD_NAME).id(BOARD_ID).build();
+        when(boardService.getBoardById(BOARD_ID)).thenReturn(board);
+        when(boardService.removeBoard(board)).thenReturn(board);
 
-        // then
-        BoardResponse result = responseEntity.getBody();
+        BoardResponse response = boardController.deleteBoard(BOARD_ID).getBody();
 
-        assertThat(result).isNotNull();
-        assertThat(result.getBoards().get(0).getName()).isEqualTo(boardName);
-        assertThat(result.getBoards().get(0).getLanes()).isEqualTo(Collections.emptyList());
-        assertThat(result.getBoards().get(0).getId()).isNotBlank();
-        assertThat(result.getStatus()).isEqualTo(Status.SUCCESS);
+        assertThat(Objects.requireNonNull(response).getBoards()).contains(board);
     }
 
     @Test
-    void whenRemoveBoardById_thenResponseIsTheSameBoard() {
-        // when
-        String boardName = DataProvider.generateRandomString();
-        String userId = DataProvider.generateRandomString();
-        Board board = createMockBoard(boardName, userId);
+    void whenGetBoardsByUserId_thenCorrectBoardIsReturned() {
+        Board board = Board.builder().name(BOARD_NAME).id(BOARD_ID).allowedUsers(new String[]{USER_ID}).build();
+        when(boardService.getBoardsByUserId(USER_ID)).thenReturn(List.of(board));
 
-        // do
-        ResponseEntity<BoardResponse> removeResponseEntity = boardController.deleteBoard(board.getId());
+        BoardResponse response = boardController.getBoardsByUserId(USER_ID).getBody();
 
-        // then
-        BoardResponse result = removeResponseEntity.getBody();
-
-        assertThat(result).isNotNull();
-        assertThat(result.getBoards().get(0).getName()).isEqualTo(boardName);
-        assertThat(result.getBoards().get(0).getLanes()).isEqualTo(Collections.emptyList());
-        assertThat(result.getBoards().get(0).getId()).isNotBlank();
-        assertThat(result.getStatus()).isEqualTo(Status.SUCCESS);
-        assertThat(result.getBoards().get(0)).usingRecursiveComparison().isEqualTo(board);
+        assertThat(Objects.requireNonNull(response).getBoards()).contains(board);
     }
 
     @Test
-    void whenLaneIsAddedToBoard_thenBoardContainsLane(@Autowired MongoTemplate mongoTemplate) {
-        // when
-        String boardName = DataProvider.generateRandomString();
-        String userId = DataProvider.generateRandomString();
-        Board board = createMockBoard(boardName, userId);
+    void whenGetBoardsById_thenCorrectBoardIsReturned() {
+        Board board = Board.builder().name(BOARD_NAME).id(BOARD_ID).allowedUsers(new String[]{USER_ID}).build();
+        when(boardService.getBoardById(BOARD_ID)).thenReturn(board);
 
-        // do
-        ResponseEntity<LaneResponse> laneResponseResponseEntity = boardController.createLane(board.getId(), "TestLane");
+        BoardResponse response = boardController.getBoardById(BOARD_ID).getBody();
 
-        // then
-        Board resultBoard = mongoTemplate.findById(board.getId(), Board.class);
-        assertThat(resultBoard).isNotNull();
-        LaneResponse resultLaneResponse = laneResponseResponseEntity.getBody();
-        assert resultLaneResponse != null;
-        assertThat(resultLaneResponse).isNotNull();
-
-        assertThat(resultBoard.getName()).isEqualTo(boardName);
-        assertThat(resultBoard.getLanes().size()).isEqualTo(1);
-        assertThat(resultBoard.getLanes().get(0)).usingRecursiveComparison().isEqualTo(resultLaneResponse.getLane());
-        assertThat(resultBoard.getId()).isEqualTo(board.getId());
-        assertThat(resultLaneResponse.getStatus()).isEqualTo(Status.SUCCESS);
+        assertThat(Objects.requireNonNull(response).getBoards()).contains(board);
     }
 
     @Test
-    void whenLaneIsRemovedFromBoard_thenBoardLanesEmpty(@Autowired MongoTemplate mongoTemplate) {
-        // when
-        String boardName = DataProvider.generateRandomString();
-        String userId = DataProvider.generateRandomString();
-        Board board = createMockBoard(boardName, userId);
+    void whenCreateLane_thenCorrectLaneIsReturned() {
+        Board board = Board.builder().name(BOARD_NAME).id(BOARD_ID).allowedUsers(new String[]{USER_ID}).build();
 
-        // do
-        ResponseEntity<LaneResponse> laneResponseResponseEntity = boardController.createLane(board.getId(), "TestLane");
+        when(boardService.getBoardById(BOARD_ID)).thenReturn(board);
 
-        // then
-        Board resultBoard = mongoTemplate.findById(board.getId(), Board.class);
-        assertThat(resultBoard).isNotNull();
-        LaneResponse resultLaneResponse = laneResponseResponseEntity.getBody();
-        assertThat(resultLaneResponse).isNotNull();
+        LaneResponse response = boardController.createLane(BOARD_ID, LANE_NAME).getBody();
 
-        assertThat(resultBoard.getLanes().size()).isEqualTo(1);
-        assertThat(resultBoard.getLanes().get(0)).usingRecursiveComparison().isEqualTo(resultLaneResponse.getLane());
-
-        // do
-        boardController.deleteLane(board.getId(), resultLaneResponse.getLane().getId());
-
-        // then
-        assertThat(board.getLanes()).isEmpty();
+        assertThat(Objects.requireNonNull(response).getLane().getName()).isEqualTo(LANE_NAME);
+        verify(boardService).appendLaneToBoard(any(), any());
     }
 
     @Test
-    void whenCardIsAddedToLane_thenLaneContainsCard(@Autowired MongoTemplate mongoTemplate) {
-        // when
-        String boardName = DataProvider.generateRandomString();
-        String userId = DataProvider.generateRandomString();
-        Board board = createMockBoard(boardName, userId);
+    void whenDeleteLane_thenCorrectLaneIsReturned() {
+        Lane lane = Lane.builder().name(LANE_NAME).id(LANE_ID).build();
+        List<Lane> lanes = new ArrayList<>();
+        lanes.add(lane);
+        Board board = Board.builder().name(BOARD_NAME).id(BOARD_ID).lanes(lanes).allowedUsers(new String[]{USER_ID}).build();
 
-        LaneResponse lane = boardController.createLane(board.getId(), "TestLane").getBody();
-        assertThat(lane).isNotNull();
+        when(boardService.getBoardById(BOARD_ID)).thenReturn(board);
 
-        // do
-        CardResponse cardResponseResponseEntity = boardController.createCard(board.getId(), lane.getLane().getId(), "TestCard").getBody();
-        assertThat(cardResponseResponseEntity).isNotNull();
+        LaneResponse response = boardController.deleteLane(BOARD_ID, LANE_ID).getBody();
 
-        // then
-        Card resultCard = mongoTemplate.findById(board.getId(), Board.class).getLanes().get(0).getCards().get(0);
-        assertThat(resultCard).isNotNull();
-
-        assertThat(resultCard.getName()).isEqualTo("TestCard");
-        assertThat(resultCard.getDescription()).isEqualTo(null);
-        assertThat(cardResponseResponseEntity.getStatus()).isEqualTo(Status.SUCCESS);
-    }
-
-    @Test
-    void whenCardIsRemovedFromLane_thenLaneHasNoCards(@Autowired MongoTemplate mongoTemplate) {
-        // when
-        String boardName = DataProvider.generateRandomString();
-        String userId = DataProvider.generateRandomString();
-        Board board = createMockBoard(boardName, userId);
-
-        LaneResponse lane = boardController.createLane(board.getId(), "TestLane").getBody();
-        assertThat(lane).isNotNull();
-        CardResponse cardResponse = boardController.createCard(board.getId(), lane.getLane().getId(), "TestLane")
-                .getBody();
-        assertThat(cardResponse).isNotNull();
-
-        //do
-        boardController.deleteCard(board.getId(), lane.getLane().getId(), cardResponse.getCard().getId());
-
-        // then
-        List<Card> resultCards = Objects.requireNonNull(mongoTemplate.findById(board.getId(), Board.class))
-                .getLanes()
-                .get(0)
-                .getCards();
-        assertThat(resultCards).isEmpty();
-    }
-
-    private Board createMockBoard(String boardName, String userId) {
-        // when
-        ResponseEntity<BoardResponse> responseEntity = boardController.createBoard(boardName, userId);
-        BoardResponse createResponse = responseEntity.getBody();
-        assertThat(createResponse).isNotNull();
-
-        Board board = createResponse.getBoards().get(0);
-        assertThat(board).isNotNull();
-        assertThat(board.getLanes()).isNotNull();
-        assertThat(board.getLanes()).hasSize(0);
-        assertThat(board.getName()).isNotBlank();
-
-        return board;
+        assertThat(Objects.requireNonNull(response).getLane().getName()).isEqualTo(LANE_NAME);
+        verify(boardService).saveBoard(any());
     }
 }

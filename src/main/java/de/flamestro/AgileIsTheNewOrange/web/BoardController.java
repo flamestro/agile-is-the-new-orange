@@ -30,8 +30,6 @@ import java.util.List;
 public class BoardController {
 
     private final BoardService boardService;
-    private final LaneService laneService;
-    private final CardService cardService;
 
     @PostMapping
     public ResponseEntity<BoardResponse> createBoard(@Valid @NotBlank @Param("name") String name,
@@ -61,22 +59,34 @@ public class BoardController {
     @PostMapping("/{boardId}/lane")
     public ResponseEntity<LaneResponse> createLane(@PathVariable String boardId,
                                                    @Valid @NotBlank @Param("name") String name) {
-        Lane lane = laneService.createLaneInBoard(boardService.getBoardById(boardId), name);
+        Board board = boardService.getBoardById(boardId);
+        Lane lane = LaneService.createLane(name);
+        boardService.appendLaneToBoard(board, lane);
+
+        log.info("added lane(id={}) to board(id={})", lane.getId(), board.getId());
         return ResponseEntity.ok(LaneResponse.builder().lane(lane).status(Status.SUCCESS).build());
     }
 
     @DeleteMapping("/{boardId}/lane/{laneId}")
     public ResponseEntity<LaneResponse> deleteLane(@PathVariable String boardId,
                                                    @PathVariable String laneId) {
-        laneService.removeLaneFromBoard(boardService.getBoardById(boardId), laneId);
-        return ResponseEntity.ok(LaneResponse.builder().status(Status.SUCCESS).build());
+        Board board = boardService.getBoardById(boardId);
+        Lane lane = LaneService.getLaneFromBoard(laneId, board);
+        LaneService.removeLaneFromBoard(laneId, board);
+        boardService.saveBoard(board);
+        return ResponseEntity.ok(LaneResponse.builder().lane(lane).status(Status.SUCCESS).build());
     }
 
     @PostMapping("/{boardId}/lane/{laneId}/card")
     public ResponseEntity<CardResponse> createCard(@PathVariable String boardId,
                                                    @PathVariable String laneId,
                                                    @Valid @NotBlank @Param("name") String name) {
-        Card card = cardService.createCard(boardService.getBoardById(boardId), laneId, name);
+        Board board = boardService.getBoardById(boardId);
+        Lane lane = LaneService.getLaneFromBoard(laneId, board);
+        Card card = CardService.createCard(name);
+        LaneService.appendCardToLane(card, lane);
+        boardService.saveBoard(board);
+        log.info("added card(id={}) to lane(id={})", card.getId(), lane.getId());
         return ResponseEntity.ok(CardResponse.builder().card(card).status(Status.SUCCESS).build());
     }
 
@@ -84,7 +94,12 @@ public class BoardController {
     public ResponseEntity<CardResponse> deleteCard(@PathVariable String boardId,
                                                    @PathVariable String laneId,
                                                    @PathVariable String cardId) {
-        Card card = cardService.removeCard(boardService.getBoardById(boardId), laneId, cardId);
+        Board board = boardService.getBoardById(boardId);
+        Lane lane = LaneService.getLaneFromBoard(laneId, board);
+        Card card = CardService.getCardByIdFromLane(lane, cardId);
+        CardService.removeCardByIdFromLane(cardId, LaneService.getLaneFromBoard(laneId, board));
+        boardService.saveBoard(board);
+        log.info("removed card(id={}) from lane(id={}) in board(id={})", cardId, laneId, board.getId());
         return ResponseEntity.ok(CardResponse.builder().card(card).status(Status.SUCCESS).build());
     }
 }

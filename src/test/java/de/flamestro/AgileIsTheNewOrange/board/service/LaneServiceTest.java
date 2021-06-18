@@ -1,57 +1,65 @@
 package de.flamestro.AgileIsTheNewOrange.board.service;
 
-import de.flamestro.AgileIsTheNewOrange.DataProvider;
 import de.flamestro.AgileIsTheNewOrange.board.model.Board;
+import de.flamestro.AgileIsTheNewOrange.board.model.Card;
 import de.flamestro.AgileIsTheNewOrange.board.model.Lane;
-import de.flamestro.AgileIsTheNewOrange.util.AbstractIntegrationTest;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class LaneServiceTest extends AbstractIntegrationTest {
-    @Autowired
-    LaneService laneService;
-    @Autowired
-    BoardService boardService;
+class LaneServiceTest {
 
     @Test
     void whenCreateLane_thenReturnLaneSuccessfully() {
-        // when
-        String boardName = DataProvider.generateRandomString();
-        String userId = DataProvider.generateRandomString();
-        String laneName = DataProvider.generateRandomString();
+        Lane lane = LaneService.createLane("someName");
 
-        Board board = boardService.createBoard(boardName, userId);
-
-        // do
-        Lane lane = laneService.createLaneInBoard(board, laneName);
-
-        // then
         assertThat(lane.getId()).isNotBlank();
         assertThat(lane.getCards()).hasSize(0);
         assertThat(lane.getName()).isNotBlank();
-        assertThat(board.getLanes().get(0)).usingRecursiveComparison().isEqualTo(lane);
     }
 
     @Test
     void whenLaneRemoved_thenBoardDoesNotContainLane() {
-        // when
-        String boardName = DataProvider.generateRandomString();
-        String userId = DataProvider.generateRandomString();
-        String laneName = DataProvider.generateRandomString();
+        List<Lane> lanes = new ArrayList<>();
+        lanes.add(Lane.builder().id("someId").build());
+        Board board = Board.builder().lanes(lanes).build();
 
-        Board board = boardService.createBoard(boardName, userId);
-        Lane lane = laneService.createLaneInBoard(board, laneName);
+        LaneService.removeLaneFromBoard("someId", board);
 
-        // do
-        assertThat(board.getLanes().get(0)).isEqualTo(lane);
-        laneService.removeLaneFromBoard(board, lane.getId());
+        assertThat(board.getLanes()).hasSize(0);
+    }
 
-        // then
-        assertThat(lane.getId()).isNotBlank();
-        assertThat(lane.getCards()).hasSize(0);
-        assertThat(lane.getName()).isNotBlank();
-        assertThat(board.getLanes().size()).isEqualTo(0);
+    @Test
+    void whenAppendCardToLane_thenCardIsInLane() {
+        Lane lane = Lane.builder().id("someId").build();
+        Card card = Card.builder().id("cardId").build();
+        LaneService.appendCardToLane(card, lane);
+
+        assertThat(lane.getCards()).contains(card);
+    }
+
+    @Test
+    void whenGetLaneFromBoard_thenReturnCorrectLane() {
+        Lane lane = Lane.builder().id("someId").build();
+        Board board = Board.builder().lanes(List.of(lane)).build();
+        Lane requestedLane = LaneService.getLaneFromBoard("someId", board);
+
+        assertThat(requestedLane).isEqualTo(lane);
+    }
+
+    @Test
+    void whenGetLaneFromBoard_andBoardDoesNotContainLane_thenReturnCorrectLane() {
+        Board board = Board.builder().lanes(Collections.emptyList()).build();
+
+        Throwable throwable = assertThrows(RuntimeException.class, () -> {
+            LaneService.getLaneFromBoard("someId", board);
+        });
+
+        assertThat(throwable.getMessage()).isEqualTo("Requested Lane was not found in Board");
     }
 }
