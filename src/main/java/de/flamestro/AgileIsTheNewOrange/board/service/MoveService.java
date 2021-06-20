@@ -18,7 +18,7 @@ public class MoveService {
         Card copyOfSourceCard = copyCardWithNewId(sourceCard);
 
         CardService.removeCardByIdFromLane(sourceCard.getId(), sourceLane);
-        if(sourceBoard.getId().equals(targetBoard.getId())){
+        if (sourceBoard.getId().equals(targetBoard.getId())) {
             Lane sourceLaneInTargetBoard = LaneService.getLaneFromBoard(moveCardRequest.getSourceLaneId(), targetBoard);
             CardService.removeCardByIdFromLane(sourceCard.getId(), sourceLaneInTargetBoard);
         }

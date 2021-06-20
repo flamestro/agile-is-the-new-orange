@@ -24,7 +24,7 @@ public class LaneService {
     }
 
     public static void appendCardToLane(Card card, Lane lane) {
-        if(lane.getCards() == null){
+        if (lane.getCards() == null) {
             List<Card> cards = new ArrayList<>();
             lane.setCards(cards);
         }

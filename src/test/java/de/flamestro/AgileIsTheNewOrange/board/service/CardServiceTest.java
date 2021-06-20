@@ -33,13 +33,13 @@ class CardServiceTest {
 
     @Test
     void whenGetCardByIdFromLane_thenCorrectCardIsReturned() {
-            Card card = Card.builder().id("someId").name("someName").build();
-            List<Card> cards = new ArrayList<>();
-            cards.add(card);
-            Lane lane = Lane.builder().cards(cards).build();
+        Card card = Card.builder().id("someId").name("someName").build();
+        List<Card> cards = new ArrayList<>();
+        cards.add(card);
+        Lane lane = Lane.builder().cards(cards).build();
 
-            Card result = CardService.getCardByIdFromLane("someId", lane);
+        Card result = CardService.getCardByIdFromLane("someId", lane);
 
-            assertThat(result).usingRecursiveComparison().isEqualTo(card);
+        assertThat(result).usingRecursiveComparison().isEqualTo(card);
     }
 }

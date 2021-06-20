@@ -38,7 +38,7 @@ public class BoardService {
     }
 
     public void appendLaneToBoard(Board board, Lane lane) {
-        if(board.getLanes() == null){
+        if (board.getLanes() == null) {
             List<Lane> lanes = new ArrayList<>();
             board.setLanes(lanes);
         }

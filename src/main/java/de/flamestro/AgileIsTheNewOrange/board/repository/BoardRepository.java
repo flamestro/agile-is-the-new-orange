@@ -9,5 +9,6 @@ import java.util.List;
 @Repository
 public interface BoardRepository extends MongoRepository<Board, String> {
     List<Board> findBoardByAllowedUsersContains(String[] allowedUsers);
+
     Board findBoardById(String id);
 }

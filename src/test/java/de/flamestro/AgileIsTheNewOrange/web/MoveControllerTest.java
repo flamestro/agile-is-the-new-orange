@@ -25,15 +25,14 @@ class MoveControllerTest {
     private static final String SOURCE_LANE_ID = "sourceLaneId";
     private static final String TARGET_LANE_ID = "targetLaneId";
     private static final String SOURCE_CARD_ID = "sourceCardId";
-    private static final String TARGET_CARD_ID = "targetCardId";
     private static final String SOURCE_CARD_NAME = "sourceCardName";
-    private static final String TARGET_CARD_NAME = "targetCardName";
 
     @Mock
     BoardService boardService;
 
     @InjectMocks
     MoveController moveController;
+
     @Test
     void whenMoveCardIsCalled_thenBoardsArePersistedAfterwards() {
         List<Card> sourceCards = new ArrayList<>();
