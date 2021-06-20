@@ -19,17 +19,18 @@ class MoveServiceTest {
     private static final String TARGET_CARD_ID = "targetCardId";
     private static final String SOURCE_CARD_NAME = "sourceCardName";
     private static final String TARGET_CARD_NAME = "targetCardName";
+    private static final String USER = "someUser";
 
     @Test
     void whenBoardIsDifferent_thenMoveCorrectly() {
         Card sourceCard = Card.builder().id(SOURCE_CARD_ID).name(SOURCE_CARD_NAME).description("cardDescription").build();
         Lane sourceLane = Lane.builder().name("laneName").id(SOURCE_LANE_ID).build();
-        Board sourceBoard = Board.builder().id(SOURCE_BOARD_ID).allowedUsers(new String[]{"someUser"}).build();
+        Board sourceBoard = Board.builder().id(SOURCE_BOARD_ID).allowedUsers(new String[]{USER}).build();
         addCardToLane(sourceCard, sourceLane);
         addLaneToBoard(sourceLane, sourceBoard);
 
         Lane targetLane = Lane.builder().name("laneName").id(TARGET_LANE_ID).build();
-        Board targetBoard = Board.builder().id(TARGET_BOARD_ID).allowedUsers(new String[]{"someUser"}).build();
+        Board targetBoard = Board.builder().id(TARGET_BOARD_ID).allowedUsers(new String[]{USER}).build();
         initializeCards(targetLane);
         addLaneToBoard(targetLane, targetBoard);
 
@@ -55,13 +56,13 @@ class MoveServiceTest {
     void whenBoardIsDifferent_andSpecifiesTargetCard_thenMoveCorrectly() {
         Card sourceCard = Card.builder().id(SOURCE_CARD_ID).name(SOURCE_CARD_NAME).description("cardDescription").build();
         Lane sourceLane = Lane.builder().name("laneName").id(SOURCE_LANE_ID).build();
-        Board sourceBoard = Board.builder().id(SOURCE_BOARD_ID).allowedUsers(new String[]{"someUser"}).build();
+        Board sourceBoard = Board.builder().id(SOURCE_BOARD_ID).allowedUsers(new String[]{USER}).build();
         addCardToLane(sourceCard, sourceLane);
         addLaneToBoard(sourceLane, sourceBoard);
 
         Card targetCard = Card.builder().id(TARGET_CARD_ID).name(TARGET_CARD_NAME).description("cardDescription").build();
         Lane targetLane = Lane.builder().name("laneName").id(TARGET_LANE_ID).build();
-        Board targetBoard = Board.builder().id(TARGET_BOARD_ID).allowedUsers(new String[]{"someUser"}).build();
+        Board targetBoard = Board.builder().id(TARGET_BOARD_ID).allowedUsers(new String[]{USER}).build();
         addCardToLane(targetCard, targetLane);
         addLaneToBoard(targetLane, targetBoard);
 
@@ -90,7 +91,7 @@ class MoveServiceTest {
         Card sourceCard = Card.builder().id(SOURCE_CARD_ID).name(SOURCE_CARD_NAME).description("cardDescription").build();
         Lane sourceLane = Lane.builder().name("lane1Name").id(SOURCE_LANE_ID).build();
         Lane targetLane = Lane.builder().name("lane2Name").id(TARGET_LANE_ID).build();
-        Board sourceBoard = Board.builder().id(SOURCE_BOARD_ID).allowedUsers(new String[]{"someUser"}).build();
+        Board sourceBoard = Board.builder().id(SOURCE_BOARD_ID).allowedUsers(new String[]{USER}).build();
         addCardToLane(sourceCard, sourceLane);
         initializeCards(targetLane);
         addLaneToBoard(sourceLane, sourceBoard);
@@ -119,7 +120,7 @@ class MoveServiceTest {
         Card targetCard = Card.builder().id(TARGET_CARD_ID).name(TARGET_CARD_NAME).description("cardDescription").build();
         Lane sourceLane = Lane.builder().name("lane1Name").id(SOURCE_LANE_ID).build();
         Lane targetLane = Lane.builder().name("lane2Name").id(TARGET_LANE_ID).build();
-        Board sourceBoard = Board.builder().id(SOURCE_BOARD_ID).allowedUsers(new String[]{"someUser"}).build();
+        Board sourceBoard = Board.builder().id(SOURCE_BOARD_ID).allowedUsers(new String[]{USER}).build();
         addCardToLane(sourceCard, sourceLane);
         addCardToLane(targetCard, targetLane);
         addLaneToBoard(sourceLane, sourceBoard);
