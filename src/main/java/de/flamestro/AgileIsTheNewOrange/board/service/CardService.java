@@ -20,7 +20,7 @@ public class CardService {
         lane.getCards().removeIf(cardInLane -> cardInLane.getId().equals(cardId));
     }
 
-    public static Card getCardByIdFromLane(Lane lane, String cardId) {
+    public static Card getCardByIdFromLane(String cardId, Lane lane) {
         Optional<Card> requestedCard = lane.getCards().stream().filter(c -> c.getId().equals(cardId)).findFirst();
         return requestedCard.orElse(null);
     }

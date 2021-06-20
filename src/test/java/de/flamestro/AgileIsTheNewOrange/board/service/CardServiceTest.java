@@ -38,7 +38,7 @@ class CardServiceTest {
             cards.add(card);
             Lane lane = Lane.builder().cards(cards).build();
 
-            Card result = CardService.getCardByIdFromLane(lane, "someId");
+            Card result = CardService.getCardByIdFromLane("someId", lane);
 
             assertThat(result).usingRecursiveComparison().isEqualTo(card);
     }

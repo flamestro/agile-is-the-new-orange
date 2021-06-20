@@ -96,7 +96,7 @@ public class BoardController {
                                                    @PathVariable String cardId) {
         Board board = boardService.getBoardById(boardId);
         Lane lane = LaneService.getLaneFromBoard(laneId, board);
-        Card card = CardService.getCardByIdFromLane(lane, cardId);
+        Card card = CardService.getCardByIdFromLane(cardId, lane);
         CardService.removeCardByIdFromLane(cardId, LaneService.getLaneFromBoard(laneId, board));
         boardService.saveBoard(board);
         log.info("removed card(id={}) from lane(id={}) in board(id={})", cardId, laneId, board.getId());
