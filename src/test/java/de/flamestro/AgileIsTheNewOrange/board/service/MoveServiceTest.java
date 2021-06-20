@@ -6,9 +6,7 @@ import de.flamestro.AgileIsTheNewOrange.board.model.Lane;
 import de.flamestro.AgileIsTheNewOrange.web.model.MoveCardRequest;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import static de.flamestro.AgileIsTheNewOrange.DataProvider.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class MoveServiceTest {
@@ -24,19 +22,16 @@ class MoveServiceTest {
 
     @Test
     void whenBoardIsDifferent_thenMoveCorrectly() {
-        List<Card> sourceCards = new ArrayList<>();
         Card sourceCard = Card.builder().id(SOURCE_CARD_ID).name(SOURCE_CARD_NAME).description("cardDescription").build();
-        sourceCards.add(sourceCard);
-        List<Lane> sourceLanes = new ArrayList<>();
-        Lane sourceLane = Lane.builder().cards(sourceCards).name("laneName").id(SOURCE_LANE_ID).build();
-        sourceLanes.add(sourceLane);
-        Board sourceBoard = Board.builder().lanes(sourceLanes).id(SOURCE_BOARD_ID).allowedUsers(new String[]{"someUser"}).build();
+        Lane sourceLane = Lane.builder().name("laneName").id(SOURCE_LANE_ID).build();
+        Board sourceBoard = Board.builder().id(SOURCE_BOARD_ID).allowedUsers(new String[]{"someUser"}).build();
+        addCardToLane(sourceCard, sourceLane);
+        addLaneToBoard(sourceLane, sourceBoard);
 
-        List<Card> targetCards = new ArrayList<>();
-        Lane targetLane = Lane.builder().cards(targetCards).name("laneName").id(TARGET_LANE_ID).build();
-        List<Lane> targetLanes = new ArrayList<>();
-        targetLanes.add(targetLane);
-        Board targetBoard = Board.builder().id(TARGET_BOARD_ID).lanes(targetLanes).allowedUsers(new String[]{"someUser"}).build();
+        Lane targetLane = Lane.builder().name("laneName").id(TARGET_LANE_ID).build();
+        Board targetBoard = Board.builder().id(TARGET_BOARD_ID).allowedUsers(new String[]{"someUser"}).build();
+        initializeCards(targetLane);
+        addLaneToBoard(targetLane, targetBoard);
 
         MoveService.moveCardFromSourceToTarget(sourceBoard, targetBoard, MoveCardRequest.builder()
                 .sourceBoardId(SOURCE_BOARD_ID)
@@ -58,21 +53,17 @@ class MoveServiceTest {
 
     @Test
     void whenBoardIsDifferent_andSpecifiesTargetCard_thenMoveCorrectly() {
-        List<Card> sourceCards = new ArrayList<>();
         Card sourceCard = Card.builder().id(SOURCE_CARD_ID).name(SOURCE_CARD_NAME).description("cardDescription").build();
-        sourceCards.add(sourceCard);
-        List<Lane> sourceLanes = new ArrayList<>();
-        Lane sourceLane = Lane.builder().cards(sourceCards).name("laneName").id(SOURCE_LANE_ID).build();
-        sourceLanes.add(sourceLane);
-        Board sourceBoard = Board.builder().lanes(sourceLanes).id(SOURCE_BOARD_ID).allowedUsers(new String[]{"someUser"}).build();
+        Lane sourceLane = Lane.builder().name("laneName").id(SOURCE_LANE_ID).build();
+        Board sourceBoard = Board.builder().id(SOURCE_BOARD_ID).allowedUsers(new String[]{"someUser"}).build();
+        addCardToLane(sourceCard, sourceLane);
+        addLaneToBoard(sourceLane, sourceBoard);
 
-        List<Card> targetCards = new ArrayList<>();
         Card targetCard = Card.builder().id(TARGET_CARD_ID).name(TARGET_CARD_NAME).description("cardDescription").build();
-        targetCards.add(targetCard);
-        Lane targetLane = Lane.builder().cards(targetCards).name("laneName").id(TARGET_LANE_ID).build();
-        List<Lane> targetLanes = new ArrayList<>();
-        targetLanes.add(targetLane);
-        Board targetBoard = Board.builder().id(TARGET_BOARD_ID).lanes(targetLanes).allowedUsers(new String[]{"someUser"}).build();
+        Lane targetLane = Lane.builder().name("laneName").id(TARGET_LANE_ID).build();
+        Board targetBoard = Board.builder().id(TARGET_BOARD_ID).allowedUsers(new String[]{"someUser"}).build();
+        addCardToLane(targetCard, targetLane);
+        addLaneToBoard(targetLane, targetBoard);
 
         MoveService.moveCardFromSourceToTarget(sourceBoard, targetBoard, MoveCardRequest.builder()
                 .sourceBoardId(SOURCE_BOARD_ID)
@@ -96,17 +87,14 @@ class MoveServiceTest {
 
     @Test
     void whenBoardIsSame_thenMoveCorrectly() {
-        List<Card> sourceCards = new ArrayList<>();
         Card sourceCard = Card.builder().id(SOURCE_CARD_ID).name(SOURCE_CARD_NAME).description("cardDescription").build();
-        sourceCards.add(sourceCard);
-
-        List<Card> targetCards = new ArrayList<>();
-        List<Lane> sourceLanes = new ArrayList<>();
-        Lane sourceLane = Lane.builder().cards(sourceCards).name("lane1Name").id(SOURCE_LANE_ID).build();
-        Lane targetLane = Lane.builder().cards(targetCards).name("lane2Name").id(TARGET_LANE_ID).build();
-        sourceLanes.add(sourceLane);
-        sourceLanes.add(targetLane);
-        Board sourceBoard = Board.builder().lanes(sourceLanes).id(SOURCE_BOARD_ID).allowedUsers(new String[]{"someUser"}).build();
+        Lane sourceLane = Lane.builder().name("lane1Name").id(SOURCE_LANE_ID).build();
+        Lane targetLane = Lane.builder().name("lane2Name").id(TARGET_LANE_ID).build();
+        Board sourceBoard = Board.builder().id(SOURCE_BOARD_ID).allowedUsers(new String[]{"someUser"}).build();
+        addCardToLane(sourceCard, sourceLane);
+        initializeCards(targetLane);
+        addLaneToBoard(sourceLane, sourceBoard);
+        addLaneToBoard(targetLane, sourceBoard);
 
         MoveService.moveCardFromSourceToTarget(sourceBoard, sourceBoard, MoveCardRequest.builder()
                 .sourceBoardId(SOURCE_BOARD_ID)
@@ -127,19 +115,15 @@ class MoveServiceTest {
 
     @Test
     void whenBoardIsSame_andSpecifiesTargetCard_thenMoveCorrectly() {
-        List<Card> sourceCards = new ArrayList<>();
         Card sourceCard = Card.builder().id(SOURCE_CARD_ID).name(SOURCE_CARD_NAME).description("cardDescription").build();
-        sourceCards.add(sourceCard);
-
-        List<Card> targetCards = new ArrayList<>();
         Card targetCard = Card.builder().id(TARGET_CARD_ID).name(TARGET_CARD_NAME).description("cardDescription").build();
-        targetCards.add(targetCard);
-        List<Lane> sourceLanes = new ArrayList<>();
-        Lane sourceLane = Lane.builder().cards(sourceCards).name("lane1Name").id(SOURCE_LANE_ID).build();
-        Lane targetLane = Lane.builder().cards(targetCards).name("lane2Name").id(TARGET_LANE_ID).build();
-        sourceLanes.add(sourceLane);
-        sourceLanes.add(targetLane);
-        Board sourceBoard = Board.builder().lanes(sourceLanes).id(SOURCE_BOARD_ID).allowedUsers(new String[]{"someUser"}).build();
+        Lane sourceLane = Lane.builder().name("lane1Name").id(SOURCE_LANE_ID).build();
+        Lane targetLane = Lane.builder().name("lane2Name").id(TARGET_LANE_ID).build();
+        Board sourceBoard = Board.builder().id(SOURCE_BOARD_ID).allowedUsers(new String[]{"someUser"}).build();
+        addCardToLane(sourceCard, sourceLane);
+        addCardToLane(targetCard, targetLane);
+        addLaneToBoard(sourceLane, sourceBoard);
+        addLaneToBoard(targetLane, sourceBoard);
 
         MoveService.moveCardFromSourceToTarget(sourceBoard, sourceBoard, MoveCardRequest.builder()
                 .sourceBoardId(SOURCE_BOARD_ID)
